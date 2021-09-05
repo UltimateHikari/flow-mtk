@@ -2,24 +2,72 @@ import runtime;
 import ds/array;
 import string;
 
-
+asum(arr : [int]) -> int{
+	fold(arr, 0, \x, y -> x + y);
+}
 
 fibRecursive(n : int) -> [int] { 
 	/**
 	 * switch can not dispatch on ints and other basic types?
 	 * strange indeed
+	 * also question with [] cast to [int] here. Maybe?
 	 */ 
 	if ( n < 2 ) {
-		[0]
+		[0];
 	} else {
 		if ( n == 2) { 
-			[0,1]
+			[0,1];
 		} else {
-			fold( subrange(fibRecursive(n - 1), n - 3, 2), )
+			concat(fibRecursive(n - 1), [asum ( subrange( fibRecursive(n - 1), n - 3, 2))] )
 		}
 	}
 }
 
+fibDynamicHelper(arr : [int], a : int, b : int, n : int) -> [int]{
+	if(n < 1) {
+		arr;
+	} else {
+		fibDynamicHelper(concat (arr, [a]), b, a + b, n - 1)
+	}
+}
+
+fibDynamic(n : int) -> [int] { 
+	fibDynamicHelper([], 0, 1, n)
+}
+
+fibRefHelper(arr : ref [int], a : int, b : int, n : int) -> void{
+	if( n > 0 ){
+		refArrayPush(arr, a);
+		println(^arr);
+		fibRefHelper(arr, b, a + b, n - 1)
+	}
+}
+
+fibRef(n : int) -> [int] {
+	/**
+	 * how long "arr" lifespan is?
+	 */
+	arr = [];
+	fibRefHelper(ref arr, 0, 1, n);
+	println(arr);
+	arr;
+}
+
 main() {
-	
+	println(fibRecursive(0));
+	println(fibRecursive(1));
+	println(fibRecursive(10));
+	println("-----");
+
+	println(fibDynamic(0));
+	println(fibDynamic(1));
+	println(fibDynamic(10));
+	println("-----");
+
+	println(fibRef(0));
+	println("--");
+	println(fibRef(1));
+	println("--");
+	println(fibRef(10));
+	println("-----");
 }
