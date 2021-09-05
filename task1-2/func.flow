@@ -1,0 +1,22 @@
+import runtime;
+import ds/array;
+import string;
+
+ai2s(arr : [int]) -> [string]{
+	map(arr, i2s);
+}
+
+asum(arr : [int]) -> int{
+	fold(arr, 0, \x, y -> x + y);
+}
+
+main() {
+	a : [int] = [1, 2, 3, 4, 2147483647];
+
+	println(a);
+	
+	println(ai2s(a));
+	println(strGlue(ai2s(a), "; "));
+
+	println(asum(a));
+}
