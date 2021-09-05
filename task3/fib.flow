@@ -1,0 +1,25 @@
+import runtime;
+import ds/array;
+import string;
+
+
+
+fibRecursive(n : int) -> [int] { 
+	/**
+	 * switch can not dispatch on ints and other basic types?
+	 * strange indeed
+	 */ 
+	if ( n < 2 ) {
+		[0]
+	} else {
+		if ( n == 2) { 
+			[0,1]
+		} else {
+			fold( subrange(fibRecursive(n - 1), n - 3, 2), )
+		}
+	}
+}
+
+main() {
+	
+}
