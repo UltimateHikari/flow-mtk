@@ -1,0 +1,32 @@
+import runtime;
+import ds/array;
+import ds/tree;
+import string;
+
+indsNaive(a : [int], m : int) -> [Pair<int, int>]{
+    /**
+     * currying instead of ugly lambdas? how?
+     */
+    test = a[0];
+    foldi(a, [],
+        \ ind1, cur, elem1 -> 
+        foldi(tailFrom(a, ind1), cur,    
+            \ ind2, curInner, elem2 -> 
+            if(m == elem1 + elem2 && ind2 != 0){ concat(curInner, [Pair(ind1, ind1 + ind2)]) } else { curInner } )
+    );
+}
+
+// inds(a : [int], m : int) -> [Pair<int, int>]{
+//     makeTree();
+//     [];
+// }
+
+main() {
+	a : [int] = [1,2,10,4,5,10,7,8,9,10];
+    b : [int] = [1,2,3,4,5,6,7,8,9,10];
+    m : int = 11;
+    m2 : int = 20;
+    println(indsNaive(a,m));
+    println(indsNaive(b,m));
+    println(indsNaive(b,m2)); 
+}
