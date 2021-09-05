@@ -35,22 +35,18 @@ fibDynamic(n : int) -> [int] {
 	fibDynamicHelper([], 0, 1, n)
 }
 
-fibRefHelper(arr : ref [int], a : int, b : int, n : int) -> void{
+fibRefHelper(arr : ref [int], a : int, b : int, n : int) -> ref [int]{
 	if( n > 0 ){
 		refArrayPush(arr, a);
-		println(^arr);
-		fibRefHelper(arr, b, a + b, n - 1)
+		fibRefHelper(arr, b, a + b, n - 1);
+	} else {
+		arr;
 	}
 }
 
 fibRef(n : int) -> [int] {
-	/**
-	 * how long "arr" lifespan is?
-	 */
 	arr = [];
-	fibRefHelper(ref arr, 0, 1, n);
-	println(arr);
-	arr;
+	^(fibRefHelper(ref arr, 0, 1, n));
 }
 
 main() {
@@ -65,9 +61,7 @@ main() {
 	println("-----");
 
 	println(fibRef(0));
-	println("--");
 	println(fibRef(1));
-	println("--");
 	println(fibRef(10));
 	println("-----");
 }
