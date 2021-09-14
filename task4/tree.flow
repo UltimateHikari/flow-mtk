@@ -16,17 +16,20 @@ indsNaive(a : [int], m : int) -> [Pair<int, int>]{
     );
 }
 
-// inds(a : [int], m : int) -> [Pair<int, int>]{
-//     makeTree();
-//     [];
-// }
+inds(a : [int], m : int) -> [Pair<int, int>]{
+    tree = makeTree();
+    iteri(a, \ ind, elem -> setTree(tree, elem, concat(lookupTreeDef(tree, elem, []), [ind]) ));
+    println(tree);
+    // and then foldi + lookup
+}
 
 main() {
 	a : [int] = [1,2,10,4,5,10,7,8,9,10];
     b : [int] = [1,2,3,4,5,6,7,8,9,10];
     m : int = 11;
     m2 : int = 20;
-    println(indsNaive(a,m));
-    println(indsNaive(b,m));
-    println(indsNaive(b,m2)); 
+    println(indsNaive(a, m));
+    println(indsNaive(b, m));
+    println(indsNaive(b, m2)); 
+    inds(a, m);
 }

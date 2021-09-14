@@ -1,0 +1,27 @@
+import runtime;
+import ds/array;
+import ds/tree;
+import maybe;
+import string;
+
+main() {
+	input = getFileContent("./in.csv");
+    rawArray = strSplit(input, ", ");
+    println(rawArray);
+    // lacks verification that all pairs are correct
+    pairArray = map(rawArray, \ elem -> Pair(strSplit(elem, "=")[0], strSplit(elem, "=")[1]));
+    //looks like utterly ineffective due to tree copy?
+    t1 = fold(pairArray, makeTree(), \t, elem -> {treePushToArrayValue(t, firstOfPair(elem), secondOfPair(elem));});
+    println(t1);
+    //Maybe filtermap
+    crowdedKeys = filtermapTreeToArray(t1, \ key, value -> if(length(value) > 1) { Some(Pair(key, length(value))); } else { None(); });
+    println(crowdedKeys);
+    t2 = mapTree(t1, length);
+    println(t2);
+    t3 = filterTree(t2, \ key, value -> value > 2);
+    t3array = convertTreeToArray(t3, \key, value -> Pair(key, value));
+    //t3array = convertTreeToArray(t3, Pair); can i express it shorter?
+    content = strGlue(map(t3array, \elem -> strGlue([firstOfPair(elem), i2s(secondOfPair(elem))], "=")), ", ");
+    success = setFileContent("./out.csv", content);
+    println(t3array);
+}
