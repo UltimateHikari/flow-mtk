@@ -1,35 +1,38 @@
 # parser
 * string -> tree
 * (1 + (2 * 3)) - (a)
-s -> (s + s); | (s * s) | d (digit)
-d -> 0d | 1d | ... | 9d | 0 | ... | 9
-дерево синт. разбора  AST
+    s -> (s + s); | (s * s) | d (digit)
+    d -> 0d | 1d | ... |  9d | 0 | ... | 9
+дерево синт. разбора - AST \
+для (1+(2*3)): \
 AST(a) = sum(int, prod(int,int))
 
 ## first iteration 
 
-ArExp ::= ArSum, ArProd, ArInt;
-ArSum(l: ArExp, r: ArExp);
-ArProd(l: ArExp, r: ArExp);
-ArInt(val: int);
+    ArExp ::= ArSum, ArProd, ArInt;
+    ArSum(l: ArExp, r: ArExp);
+    ArProd(l: ArExp, r: ArExp);
+    ArInt(val: int);
 
-parse(s: string) -> Maybe<ArExp>;
+    parse(s: string) -> Maybe<ArExp>;
 
 ## second iteration
 peg-parser
 
-$w^*$ >-1 раз, $w^+$ - > 0 раз
+* $w^*$ means > -1 раз
+* $w^+$ means >  0 раз
 
-s = sum | prod | int
-sum = "(" s "+" s ")"
-int = digit+
-digit = '0'-'9'
+    s = sum | prod | int
+    sum = "(" s "+" s ")"
+    int = digit+
+    digit = '0'-'9'
 
 ## Семантические действия
 
-:a - метка
-{} - семантический бинд
-$a - метка строки слева
+:a - метка \
+{} - семантический бинд \
+$a - метка строки слева \
+разыменовываются метки аналогично, т.е. w+:a .... { foo(l:a) };
 
 ## whitespaces
 
