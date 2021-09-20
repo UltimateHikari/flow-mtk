@@ -1,8 +1,10 @@
 # parser
 * string -> tree
-* (1 + (2 * 3)) - (a)
+* (1 + (2 * 3)) - (a) \
+
     s -> (s + s); | (s * s) | d (digit)
     d -> 0d | 1d | ... |  9d | 0 | ... | 9
+
 дерево синт. разбора - AST \
 для (1+(2*3)): \
 AST(a) = sum(int, prod(int,int))
@@ -19,8 +21,8 @@ AST(a) = sum(int, prod(int,int))
 ## second iteration
 peg-parser
 
-* $w^*$ means > -1 раз
-* $w^+$ means >  0 раз
+$w^*$ means > -1 раз \
+$w^+$ means >  0 раз \
 
     s = sum | prod | int
     sum = "(" s "+" s ")"
