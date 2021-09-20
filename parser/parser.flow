@@ -1,0 +1,31 @@
+import runtime;
+import lingo/pegcode/driver;
+import maybe;
+import string;
+
+grammar = "#include arexp.lingo";
+
+ArExp ::= ArSum, ArProd, ArInt;
+ArSum : (l: ArExp, r: ArExp);
+ArProd : (l: ArExp, r: ArExp);
+ArInt : (val: int);
+
+parse(s: string) -> Maybe<ArExp>{
+    parser = compilePegGrammar(grammar);
+    ret = parsic3(parser, s, defaultPegActions, ArInt(0));
+    if(ret.third == "") { Some(ret.first); } else { None() }
+}
+
+ae2s(a: ArExp) -> string{
+    switch(a){
+        ArSum(l,r): ("(" + ae2s(l) + " + " + ae2s(r) + ")");
+        ArProd(l,r): ("(" + ae2s(l) + " * " + ae2s(r) + ")");
+        ArInt(v): (i2s(v));
+    }
+}
+
+main() {
+    t1 = parse(" ( 1 + ( 2 * 3) ) ");
+    println(t1);
+    println(ae2s(either(t1,ArInt(0))));
+}

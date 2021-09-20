@@ -1,0 +1,8 @@
+exp = ws sum | ws prod | ws int;
+sum = "(" exp:l ws "+" exp:r ws ")" ws { ArSum(:l,:r) };
+prod = "(" exp:l ws "*" exp:r ws ")" ws { ArProd(:l,:r) };
+int = digit+$i { ArInt(s2i($i)) } ;
+digit = '0'-'9' ;
+
+ws = s*;
+s = " " | "\t" | "\n";
