@@ -43,3 +43,20 @@ $a - метка строки слева \
 The best policy is to add "ws" at the start of the top-level grammar, and then after each token or terminal rule. Then you have the invariant that every non-terminal rule supports and parses trailing ws. (lingo.md)
 
 * напечатать дерево красиво
+
+## 2 пара:
+
+можно еще посчитать (ae2t), или транслировать во что-то не теряя смысла \
+например, в обратную польскую ae2rpn (1 2 3 * +) \
+делимся на оператор - операнд
+
+```
+RpnE ::= RpnOp | RpnArg; //(Rpn elem) 
+RpnArg : (val:int);
+RpnOp : (op:string, foo: (int, int) -> int);
+```
+
+хотим функции: \ 
+rpn2s  -> string (распечатать)  \
+rpn2t  -> int    (вычислить)    \
+rpn2ae -> Aexp   (обратно)      \
