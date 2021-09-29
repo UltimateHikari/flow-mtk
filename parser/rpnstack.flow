@@ -1,0 +1,82 @@
+import stack;
+import arexp;
+import ds/array;
+import maybe;
+
+export {
+    RpnE ::= RpnOp, RpnArg;
+    RpnArg : (val: int);
+    RpnOp : (op: string, foo: (int, int) -> int);
+
+    ae2rpn(a: ArExp) -> [RpnE];
+    rpn2s(r: [RpnE]) -> string;
+    rpn2i(r : [RpnE]) -> Maybe<int>;
+    rpn2ae(r : [RpnE]) -> Maybe<ArExp>;
+}
+
+ae2rpn(a: ArExp) -> [RpnE]{
+    switch(a){
+        //e + e -> e e +
+        ArSum(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("+", \x, y -> x + y)]);
+        ArProd(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("*", \x, y -> x * y)]);
+        ArInt(v): ([RpnArg(v)]);
+    }
+}
+
+rpn2s(r: [RpnE]) -> string{
+    ltrim2(
+        fold(r, "", 
+            \acc, elem -> strGlue(
+                [acc,   
+                switch (elem : RpnE) {
+                    RpnArg(val) : i2s(val);
+                    RpnOp(op, foo) : op; 
+                }],
+                " ")
+        ),
+        " ")
+}
+
+rpn2i(r : [RpnE]) -> Maybe<int>{
+    popStack(
+        fold(r, makeStack(), \s, e -> 
+        switch (e: RpnE) {
+            RpnArg(v) : pushStack(s, v);
+            RpnOp(op, foo) : {
+                //TODO: error-prone on incorrect rpn
+                pop1 = popStack(s);
+                pop2 = popStack(pop1.stack);
+                pushStack(pop2.stack, foo(
+                    either(pop2.value, 0), // 0 is bad universal default
+                    either(pop1.value, 0)
+                    ));
+            }
+        })
+    ).value;
+}
+rpn2ae(r : [RpnE]) -> Maybe<ArExp>{
+    popStack(
+        fold(r, makeStack(), \s, e -> 
+        switch (e: RpnE) {
+            RpnArg(v) : pushStack(s, ArInt(v));
+            RpnOp(op, foo) : {
+                //TODO: error-prone on incorrect rpn
+                pop1 = popStack(s);
+                pop2 = popStack(pop1.stack);
+                pushStack(pop2.stack, 
+                    if(op == "+"){
+                        ArSum(
+                        either(pop2.value, ArInt(-1)), // 0 is bad universal default
+                        either(pop1.value, ArInt(-1))
+                        );
+                    }else {
+                        ArProd(
+                        either(pop2.value, ArInt(-1)), // 0 is bad universal default
+                        either(pop1.value, ArInt(-1))
+                        );
+                    }
+                );
+            }
+        })
+    ).value;
+}

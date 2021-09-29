@@ -1,0 +1,69 @@
+import stack;
+
+/**
+ * polymorphic rpn
+ */
+export {
+    RpnE<?> ::= RpnOp<?>, RpnArg<?>;
+    RpnArg : (val: ?);
+    RpnOp : (op: string, foo: (?, ?) -> ?);
+
+    ae2rpni(a: ArExp) -> [RpnE<int>];
+    rpni2rpnae(r : [RpnE<int>]) -> [RpnE<ArExp>];
+
+    rpni2s(r: [RpnE<int>]) -> string;
+    evalRpn(r : [RpnE<?>]) -> Maybe<?>;
+
+}
+ae2rpni(a: ArExp) -> [RpnE<int>]{
+    switch(a){
+        //e + e -> e e +
+        ArSum(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("+", \x, y -> x + y)]);
+        ArProd(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("*", \x, y -> x * y)]);
+        ArInt(v): ([RpnArg(v)]);
+    }
+}
+
+rpni2rpnae(r : [RpnE<int>]) -> [RpnE<ArExp>]{
+    map(r, switch (e : RpnE<int>) {
+        RpnArg(v) : RpnArg(ArInt(v));
+        RpnOp(op, foo) : if(op == "*") { RpnArg(op, ArSum) } else { RpnArg(op, ArProd) };
+    })
+}
+
+rpni2s(r: [RpnE<int>]) -> string{
+    ltrim2(
+        fold(r, "", 
+            \acc, elem -> strGlue(
+                [acc,   
+                switch (elem : RpnE) {
+                    RpnArg(val) : i2s(val);
+                    RpnOp(op, foo) : op; 
+                }],
+                " ")
+        ),
+        " ")
+}
+
+evalRpn(r : [RpnE<?>]) -> Maybe<?>{
+    popStack(
+        fold(r, makeStack(), \s, e -> 
+        switch (e: RpnE) {
+            RpnArg(v) : pushStack(s, v);
+            RpnOp(op, foo) : {
+                //TODO: error-prone on incorrect rpn
+                pop1 = popStack(s);
+                pop2 = popStack(pop1.stack);
+                if(isNone(pop1.value) || isNone(pop2.value)){
+                    makeStack(); //ruin everything, will output None() anyway
+                } else {
+                pushStack(pop2.stack, foo(
+                    pop2.value.Some, 
+                    pop1.value.Some
+                    ));
+                }
+            }
+        })
+    ).value;
+}
+

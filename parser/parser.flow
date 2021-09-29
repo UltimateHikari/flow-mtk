@@ -1,109 +1,23 @@
 import runtime;
-import lingo/pegcode/driver;
-import ds/list;
+import arexp;
+import rpnstack;
 import maybe;
-import string;
-import stack;
-
-grammar = "#include arexp.lingo";
-
-ArExp ::= ArSum, ArProd, ArInt;
-ArSum : (l: ArExp, r: ArExp);
-ArProd : (l: ArExp, r: ArExp);
-ArInt : (val: int);
-
-parse(s: string) -> Maybe<ArExp>{
-    parser = compilePegGrammar(grammar);
-    ret = parsic3(parser, s, defaultPegActions, ArInt(0));
-    if(ret.third == "") { Some(ret.first); } else { None() }
-}
-
-ae2s(a: ArExp) -> string{
-    switch(a){
-        ArSum(l,r): ("(" + ae2s(l) + " + " + ae2s(r) + ")");
-        ArProd(l,r): ("(" + ae2s(l) + " * " + ae2s(r) + ")");
-        ArInt(v): (i2s(v));
-    }
-}
-
-RpnE ::= RpnOp, RpnArg;
-RpnArg : (val: int);
-RpnOp : (op: string, foo: (int, int) -> int);
-
-ae2rpn(a: ArExp) -> [RpnE]{
-    switch(a){
-        //e + e -> e e +
-        ArSum(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("+", \x, y -> x + y)]);
-        ArProd(l,r): concat3(ae2rpn(l), ae2rpn(r), [RpnOp("*", \x, y -> x * y)]);
-        ArInt(v): ([RpnArg(v)]);
-    }
-}
-
-rpn2s(r: [RpnE]) -> string{
-    ltrim2(
-        fold(r, "", 
-            \acc, elem -> strGlue(
-                [acc,   
-                switch (elem : RpnE) {
-                    RpnArg(val) : i2s(val);
-                    RpnOp(op, foo) : op; 
-                }],
-                " ")
-        ),
-        " ")
-}
-
-rpn2t(r : [RpnE]) -> Maybe<int>{
-    popStack(
-        fold(r, makeStack(), \s, e -> 
-        switch (e: RpnE) {
-            RpnArg(v) : pushStack(s, v);
-            RpnOp(op, foo) : {
-                //TODO: error-prone on incorrect rpn
-                pop1 = popStack(s);
-                pop2 = popStack(pop1.stack);
-                pushStack(pop2.stack, foo(
-                    either(pop2.value, 0), // 0 is bad universal default
-                    either(pop1.value, 0)
-                    ));
-            }
-        })
-    ).value;
-}
-rpn2ae(r : [RpnE]) -> Maybe<ArExp>{
-    popStack(
-        fold(r, makeStack(), \s, e -> 
-        switch (e: RpnE) {
-            RpnArg(v) : pushStack(s, ArInt(v));
-            RpnOp(op, foo) : {
-                //TODO: error-prone on incorrect rpn
-                pop1 = popStack(s);
-                pop2 = popStack(pop1.stack);
-                pushStack(pop2.stack, 
-                    if(op == "+"){
-                        ArSum(
-                        either(pop2.value, ArInt(-1)), // 0 is bad universal default
-                        either(pop1.value, ArInt(-1))
-                        );
-                    }else {
-                        ArProd(
-                        either(pop2.value, ArInt(-1)), // 0 is bad universal default
-                        either(pop1.value, ArInt(-1))
-                        );
-                    }
-                );
-            }
-        })
-    ).value;
-}
 
 main() {
-    t1 = parse(" ( 1 + ( 2 * 3) ) ");
+    //t1 = parse(" ( 1 + ( 2 * 3) ) ");
+    t1 = parse("(1+((2*(4+5))*3))");
     t1sure = either(t1, ArInt(0));
+    println("   raw ArExp:");
     println(t1sure);
+    println("   ae2s(ArExp):");
     println(ae2s(t1sure));
+
+    //if rpnstack imported
+    println("\nrpnstack imported.\n   rpn2s(rpn):");
     rpn1 = ae2rpn(t1sure);
     println(rpn2s(rpn1));
-    println(either(rpn2t(rpn1),-1));
+    println("   rpni(rpn):");
+    println(either(rpn2i(rpn1),-1));
+    println("   ae2s(rpn2ae(rpn)):");
     println(ae2s(either(rpn2ae(rpn1), ArInt(0))));
 }

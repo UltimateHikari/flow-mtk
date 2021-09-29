@@ -47,8 +47,8 @@ The best policy is to add "ws" at the start of the top-level grammar, and then a
 ## 2 пара:
 
 можно еще посчитать (ae2t), или транслировать во что-то не теряя смысла \
-например, в обратную польскую ae2rpn (1 2 3 * +) \
-делимся на оператор - операнд
+например, в обратную польскую ae2rpn (1 2 3 * +)                        \
+делимся на оператор - операнд                                           \
 
 ```
 RpnE ::= RpnOp | RpnArg; //(Rpn elem) 
@@ -60,3 +60,26 @@ RpnOp : (op:string, foo: (int, int) -> int);
 rpn2s  -> string (распечатать)  \
 rpn2t  -> int    (вычислить)    \
 rpn2ae -> Aexp   (обратно)      \
+
+## 3 пара
+хотим полиморфно считать через стек \
+```
+evalRpn(r : [RpnE], '?') -> Maybe<?>;
+RpnArg : (val : ?)
+```
+тогда \
+```
+ae2rpni(a:ArExp) -> [RpnE<int>]
+rpni2rpnae(a:[RpnE<int>]) -> [RpnE<AeExp>]{
+    map(a, switch{...});
+}
+```
+Что дальше:                         
+* расширить до + - * /              
+* переменные $ ((a+(b*c))*3) $      
+* вычисление
+* символьное дифференциирование
+```
+alg2i(a : AlgExp, args : Tree<string, int>) -> Maybe<int>
+dAlg(a : AlgExp, param : string) -> AlgExp
+```
