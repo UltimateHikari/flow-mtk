@@ -20,7 +20,9 @@ ae2rpni(a: ArExp) -> [RpnE<int>]{
     switch(a){
         //e + e -> e e +
         ArSum(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("+", \x, y -> x + y)]);
+        ArRes(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("-", \x, y -> x - y)]);
         ArProd(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("*", \x, y -> x * y)]);
+        ArDiv(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("/", \x, y -> x / y)]);
         ArInt(v): ([RpnArg(v)]);
     }
 }
@@ -29,10 +31,16 @@ rpni2rpnae(r : [RpnE<int>]) -> [RpnE<ArExp>]{
     map(r, \ e -> switch (e : RpnE<int>) {
         RpnArg(v) : RpnArg(ArInt(v));
         RpnOp(op, foo) : 
-            if(op == "+") { 
+            if (op == "+") { 
                 RpnOp(op, \a, b -> ArSum(a,b)) 
-            } else { 
+            } else
+            if (op == "-") { 
+                RpnOp(op, \a, b -> ArRes(a,b)) 
+            } else 
+            if (op == "*") { 
                 RpnOp(op, \a, b -> ArProd(a,b)) 
+            } else { 
+                RpnOp(op, \a, b -> ArDiv(a,b)) 
             };
     })
 }

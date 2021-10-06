@@ -3,6 +3,10 @@ import arexp;
 import ds/array;
 import maybe;
 
+/**
+ * Deprecated in favor of RPN-polymorphic
+ */
+
 export {
     RpnE ::= RpnOp, RpnArg;
     RpnArg : (val: int);

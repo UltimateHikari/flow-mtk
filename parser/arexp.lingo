@@ -1,6 +1,8 @@
-exp = ws sum | ws prod | ws int;
+exp = ws sum | ws prod | ws res | ws div | ws int;
 sum = "(" exp:l ws "+" exp:r ws ")" ws { ArSum(:l,:r) };
+res = "(" exp:l ws "-" exp:r ws ")" ws { ArRes(:l,:r) };
 prod = "(" exp:l ws "*" exp:r ws ")" ws { ArProd(:l,:r) };
+div = "(" exp:l ws "/" exp:r ws ")" ws { ArDiv(:l,:r) };
 int = digit+$i { ArInt(s2i($i)) } ;
 digit = '0'-'9' ;
 

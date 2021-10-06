@@ -6,7 +6,7 @@ import maybe;
 
 main() {
     //t1 = parse(" ( 1 + ( 2 * 3) ) ");
-    t1 = parse("(1+((2*(4+5))*3))");
+    t1 = parse("(1+((2/(4+5))-3))");
     t1sure = either(t1, ArInt(0));
     println("   raw ArExp:");
     println(t1sure);

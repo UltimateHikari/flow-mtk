@@ -2,9 +2,11 @@ import maybe;
 import lingo/pegcode/driver;
 
 export {
-    ArExp ::= ArSum, ArProd, ArInt;
+    ArExp ::= ArSum, ArRes, ArProd, ArDiv, ArInt;
     ArSum : (l: ArExp, r: ArExp);
     ArProd : (l: ArExp, r: ArExp);
+    ArRes : (l: ArExp, r: ArExp);
+    ArDiv : (l: ArExp, r: ArExp);
     ArInt : (val: int);
 
     parse(s: string) -> Maybe<ArExp>;
@@ -22,7 +24,9 @@ parse(s: string) -> Maybe<ArExp>{
 ae2s(a: ArExp) -> string{
     switch(a){
         ArSum(l,r): ("(" + ae2s(l) + " + " + ae2s(r) + ")");
+        ArRes(l,r): ("(" + ae2s(l) + " - " + ae2s(r) + ")");
         ArProd(l,r): ("(" + ae2s(l) + " * " + ae2s(r) + ")");
+        ArDiv(l,r): ("(" + ae2s(l) + " / " + ae2s(r) + ")");
         ArInt(v): (i2s(v));
     }
 }
