@@ -4,25 +4,22 @@ import arexp;
 import rpnpol;
 import maybe;
 
-main() {
-    //t1 = parse(" ( 1 + ( 2 * 3) ) ");
-    t1 = parse("(1+((2/(4+5))-3))");
-    t1sure = either(t1, ArInt(0));
-    println("   raw ArExp:");
-    println(t1sure);
-    println("   ae2s(ArExp):");
-    println(ae2s(t1sure));
 
-    // //if rpnstack imported
-    // println("\nrpnstack imported.\n   rpn2s(rpn):");
-    // rpn1 = ae2rpn(t1sure);
-    // println(rpn2s(rpn1));
-    // println("   rpni(rpn):");
-    // println(either(rpn2i(rpn1),-1));
-    // println("   ae2s(rpn2ae(rpn)):");
-    // println(ae2s(either(rpn2ae(rpn1), ArInt(0))));
+// testRpnStack(t1: ArExp) -> void{
+//     println("\nrpnstack imported.\n   rpn2s(rpn):");
+//     rpn1 = ae2rpn(t1sure);
+//     println(rpn2s(rpn1));
+//     println("   rpni(rpn):");
+//     println(either(rpn2i(rpn1),-1));
+//     println("   ae2s(rpn2ae(rpn)):");
+//     println(ae2s(either(rpn2ae(rpn1), ArInt(0))));
+// }
 
-    //if rpnpol imported
+testRpnPol(t1sure: ArExp) -> void{
+    /**
+     * if rpnpol imported
+     * will break on trees with ArVar(v)
+     */
     println("\nrpnpol imported.\n   rpn2s(rpn):");
     rpn1 = ae2rpni(t1sure);
     println(rpni2s(rpn1));
@@ -36,4 +33,18 @@ main() {
     println(t2);
     println("   ae2s(t2):");
     println(ae2s(t2))
+
+}
+
+main() {
+    //t1 = parse(" ( 1 + ( 2 * 3) ) ");
+    t1 = parse("(1+((2/(4+5))-3))");
+    t1sure = either(t1, ArInt(0));
+    println("   raw ArExp:");
+    println(t1sure);
+    println("   ae2s(ArExp):");
+    println(ae2s(t1sure));
+
+    testRpnPol(t1sure);
+
 }

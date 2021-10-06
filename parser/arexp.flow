@@ -1,12 +1,15 @@
 import maybe;
+import string;
 import lingo/pegcode/driver;
+import ds/tree;
 
 export {
-    ArExp ::= ArSum, ArRes, ArProd, ArDiv, ArInt;
+    ArExp ::= ArSum, ArRes, ArProd, ArDiv, ArInt, ArVar;
     ArSum : (l: ArExp, r: ArExp);
     ArProd : (l: ArExp, r: ArExp);
     ArRes : (l: ArExp, r: ArExp);
     ArDiv : (l: ArExp, r: ArExp);
+    ArVar : (var: string);
     ArInt : (val: int);
 
     parse(s: string) -> Maybe<ArExp>;
@@ -27,6 +30,18 @@ ae2s(a: ArExp) -> string{
         ArRes(l,r): ("(" + ae2s(l) + " - " + ae2s(r) + ")");
         ArProd(l,r): ("(" + ae2s(l) + " * " + ae2s(r) + ")");
         ArDiv(l,r): ("(" + ae2s(l) + " / " + ae2s(r) + ")");
+        ArVar(v): v;
         ArInt(v): (i2s(v));
     }
+}
+
+aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>{
+   switch(a){
+        ArSum(l,r):  maybeMap2(\x,y -> ArSum(x,y)) (aeSub(l,t), aeSub(r,t));
+        ArRes(l,r):  maybeMap2(\x,y -> ArRes(x,y)) (aeSub(l,t), aeSub(r,t));
+        ArProd(l,r): maybeMap2(\x,y -> ArProd(x,y))(aeSub(l,t), aeSub(r,t));
+        ArDiv(l,r):  maybeMap2(\x,y -> ArDiv(x,y)) (aeSub(l,t), aeSub(r,t));
+        ArVar(v): maybeMap(lookupTree(t, v), \val -> ArInt(val));
+        ArInt(v): Some(ArInt(v));
+    } 
 }

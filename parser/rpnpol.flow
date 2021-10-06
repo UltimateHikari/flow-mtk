@@ -24,6 +24,7 @@ ae2rpni(a: ArExp) -> [RpnE<int>]{
         ArProd(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("*", \x, y -> x * y)]);
         ArDiv(l,r): concat3(ae2rpni(l), ae2rpni(r), [RpnOp("/", \x, y -> x / y)]);
         ArInt(v): ([RpnArg(v)]);
+        ArVar(v): ([RpnArg(0)]);
     }
 }
 
