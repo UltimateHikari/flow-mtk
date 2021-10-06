@@ -33,7 +33,24 @@ testRpnPol(t1sure: ArExp) -> void{
     println(t2);
     println("   ae2s(t2):");
     println(ae2s(t2))
+}
 
+getSubTree() -> Tree<string, int>{
+    input = getFileContent("./in.csv");
+    pairArray = map(strSplit(input, ", "), \ elem -> Pair(strSplit(elem, "=")[0], strSplit(elem, "=")[1]));
+    mapTree(pairs2tree(pairArray), s2i);
+}
+
+testAeSub() -> void{
+    println("\n   testing AeSub");
+    t1 = either(parse("(a+((e/(d+b))-c))"), ArInt(0));
+    println("   raw ArExp:");
+    println(t1);
+    println("   ae2s(ArExp):");
+    println(ae2s(t1));
+    t2 = aeSub(t1, getSubTree());
+    println("   ae2s(aeSub(ArExp)):");
+    println2(ae2s(either(t2, ArInt(0))));
 }
 
 main() {
@@ -47,4 +64,5 @@ main() {
 
     testRpnPol(t1sure);
 
+    testAeSub();
 }

@@ -1,4 +1,4 @@
-exp = ws sum | ws prod | ws res | ws div | ws int;
+exp = ws sum | ws prod | ws res | ws div | ws var | ws int;
 sum = "(" exp:l ws "+" exp:r ws ")" ws { ArSum(:l,:r) };
 res = "(" exp:l ws "-" exp:r ws ")" ws { ArRes(:l,:r) };
 prod = "(" exp:l ws "*" exp:r ws ")" ws { ArProd(:l,:r) };

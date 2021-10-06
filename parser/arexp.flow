@@ -14,6 +14,7 @@ export {
 
     parse(s: string) -> Maybe<ArExp>;
     ae2s(a: ArExp) -> string;
+    aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>;
 }
 
 grammar = "#include arexp.lingo";
