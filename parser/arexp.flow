@@ -2,6 +2,7 @@ import maybe;
 import string;
 import lingo/pegcode/driver;
 import ds/tree;
+import dynamic;
 
 export {
     ArExp ::= ArSum, ArRes, ArProd, ArDiv, ArInt, ArVar;
@@ -18,6 +19,8 @@ export {
     aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>;
     // Differentiation
     aeDiff(a: ArExp) -> ArExp;
+    // Simplification
+    aeSmp(a: ArExp) -> ArExp;
 }
 
 grammar = "#include arexp.lingo";
@@ -58,5 +61,30 @@ aeDiff(a: ArExp) -> ArExp{
         ArDiv(l,r):  ArDiv( ArRes(ArProd(aeDiff(l), r), ArProd(l, aeDiff(r))), ArProd(r,r));
         ArVar(v): ArInt(1);
         ArInt(v): ArInt(0);
+    }
+}
+
+sumRules(l: ArExp, r: ArExp) -> ArExp{
+    if(l == ArInt(0)){
+        aeSmp(r);
+    } else if(r == ArInt(0)){
+        aeSmp(l);
+    } else if(isSameStructType(l, ArInt(0)) && isSameStructType(r, ArInt(0))){
+        ArInt(cast(l: ArExp -> ArInt).val + cast(r: ArExp -> ArInt).val);
+    } else if(l == r){
+        ArProd(ArInt(2),aeSmp(l));
+    } else {
+        ArSum(aeSmp(l),aeSmp(r));
+    }
+}
+
+aeSmp(a: ArExp) -> ArExp{
+    switch(a){
+        ArSum(l,r):  sumRules(l,r);
+        ArRes(l,r):  ArRes(aeSmp(l), aeSmp(r));
+        ArProd(l,r): ArProd(aeSmp(l), aeSmp(r));
+        ArDiv(l,r):  ArDiv(aeSmp(l), aeSmp(r));
+        ArVar(v): ArVar(v);
+        ArInt(v): ArInt(v);
     }
 }
