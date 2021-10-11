@@ -6,7 +6,8 @@ import maybe;
 
 
 // testRpnStack(t1: ArExp) -> void{
-//     println("\nrpnstack imported.\n   rpn2s(rpn):");
+//     println("\nTEST: rpnstack");
+//     println("\n   rpn2s(rpn):");
 //     rpn1 = ae2rpn(t1sure);
 //     println(rpn2s(rpn1));
 //     println("   rpni(rpn):");
@@ -15,12 +16,23 @@ import maybe;
 //     println(ae2s(either(rpn2ae(rpn1), ArInt(0))));
 // }
 
+testArExp() -> ArExp{
+    t1 = parse("(1+((2/(4+5))-3))");
+    t1sure = either(t1, ArInt(0));
+    println("   raw ArExp:");
+    println(t1sure);
+    println("   ae2s(ArExp):");
+    println(ae2s(t1sure));
+    t1sure;
+}
+
 testRpnPol(t1sure: ArExp) -> void{
     /**
      * if rpnpol imported
      * will break on trees with ArVar(v)
      */
-    println("\nrpnpol imported.\n   rpn2s(rpn):");
+    println("\nTEST: rpnpol");
+    println("\n   rpn2s(rpn):");
     rpn1 = ae2rpni(t1sure);
     println(rpni2s(rpn1));
     println("   evalRpn(rpn):");
@@ -42,7 +54,7 @@ getSubTree() -> Tree<string, int>{
 }
 
 testAeSub() -> void{
-    println("\n   testing AeSub");
+    println("\nTEST: AeSub");
     t1 = either(parse("(a+((e/(d+b))-c))"), ArInt(0));
     println("   raw ArExp:");
     println(t1);
@@ -53,16 +65,21 @@ testAeSub() -> void{
     println2(ae2s(either(t2, ArInt(0))));
 }
 
-main() {
-    //t1 = parse(" ( 1 + ( 2 * 3) ) ");
-    t1 = parse("(1+((2/(4+5))-3))");
-    t1sure = either(t1, ArInt(0));
+testAeDiff() -> void{
+    println("\nTEST: AeDiff");
+    t1 = either(parse("(a+((e/(d+b))-c))"), ArInt(0));
     println("   raw ArExp:");
-    println(t1sure);
+    println(t1);
     println("   ae2s(ArExp):");
-    println(ae2s(t1sure));
+    println(ae2s(t1));
+    t2 = aeDiff(t1);
+    println("   ae2s(aeDiff(ArExp)):");
+    println2(ae2s(t2));
+}
 
-    testRpnPol(t1sure);
-
+main() {
+    t1 = testArExp();
+    testRpnPol(t1);
     testAeSub();
+    testAeDiff();
 }

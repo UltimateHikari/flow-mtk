@@ -83,3 +83,11 @@ rpni2rpnae(a:[RpnE<int>]) -> [RpnE<AeExp>]{
 alg2i(a : AlgExp, args : Tree<string, int>) -> Maybe<int>
 dAlg(a : AlgExp, param : string) -> AlgExp
 ```
+
+## после 4 пары
+
+- [x] +-*/
+- [x] символьные переменные
+- [x] подстановка переменных
+- [x] символьное дифференциирование
+- [ ] упрощение выражений

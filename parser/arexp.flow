@@ -14,7 +14,10 @@ export {
 
     parse(s: string) -> Maybe<ArExp>;
     ae2s(a: ArExp) -> string;
+    // Variable substitution
     aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>;
+    // Differentiation
+    aeDiff(a: ArExp) -> ArExp;
 }
 
 grammar = "#include arexp.lingo";
@@ -45,4 +48,15 @@ aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>{
         ArVar(v): maybeMap(lookupTree(t, v), \val -> ArInt(val));
         ArInt(v): Some(ArInt(v));
     } 
+}
+
+aeDiff(a: ArExp) -> ArExp{
+    switch(a){
+        ArSum(l,r):  ArSum(aeDiff(l), aeDiff(r));
+        ArRes(l,r):  ArRes(aeDiff(l), aeDiff(r));
+        ArProd(l,r): ArSum(ArProd(aeDiff(l), r), ArProd(l, aeDiff(r)));
+        ArDiv(l,r):  ArDiv( ArRes(ArProd(aeDiff(l), r), ArProd(l, aeDiff(r))), ArProd(r,r));
+        ArVar(v): ArInt(1);
+        ArInt(v): ArInt(0);
+    }
 }
