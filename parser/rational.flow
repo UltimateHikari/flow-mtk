@@ -1,0 +1,84 @@
+import arexp;
+
+export{
+    Mon    : (m: Tree<string, int>);
+    Poly   : (m: Tree<Mon, int>);
+    RatExp : (num : Poly, denom: Poly);
+
+    alg2rat(a: ArExp) -> RatExp;
+}
+
+alg2rat(a: ArExp) -> RatExp{
+    switch (a) {
+        ArSum(l,r): {
+            r1 = alg2rat(l);
+            r2 = alg2rat(r);
+            RatExp(sumPoly(prodPoly(r1.num, r2.denom), prodPoly(r2.num, r1.denom)), prodPoly(r1.denom, r2.denom));
+        }
+        ArRes(l,r): {
+            r1 = alg2rat(l);
+            r2 = alg2rat(r);
+            RatExp(resPoly(prodPoly(r1.num, r2.denom), prodPoly(r2.num, r1.denom)), prodPoly(r1.denom, r2.denom));
+        }
+        ArProd(l,r): {
+            r1 = alg2rat(l);
+            r2 = alg2rat(r);
+            RatExp(prodPoly(r1.num, r2.num), prodPoly(r1.denom, r2.denom));
+        }
+        ArDiv(l,r): {
+            r1 = alg2rat(l);
+            r2 = alg2rat(r);
+            RatExp(prodPoly(r1.num, r2.denom), prodPoly(r1.denom, r2.num));
+        }
+        ArVar(v): RatExp(
+            Poly(makeTree1(Mon(makeTree1(v,1)), 1)),
+            Poly(makeTree1(Mon(makeTree()), 1))
+            );
+        ArInt(v): RatExp(
+            Poly(makeTree1(Mon(makeTree()), v)),
+            Poly(makeTree1(Mon(makeTree()), 1))
+            );
+    }
+}
+
+commonMerge(a: Tree<?, ??>, b: Tree<?,??>, f: (??, ??) -> ??){
+    mergeTreeCustom(
+        a, 
+        b,
+        \k, v1, v2 -> f(v1,v2)
+    )
+}
+
+prodMon(a : Mon, b : Mon) -> Mon{
+    Mon(commonMerge(a.m, b.m, \x,y -> x + y));
+}
+
+sumPoly(a : Poly, b: Poly) -> Poly{
+    //TODO error prone, weak Mon comparison
+    Poly(commonMerge(a.m, b.m, \x,y -> x + y));
+}
+
+resPoly(a : Poly, b: Poly) -> Poly{
+    //TODO error prone, weak Mon comparison
+    Poly(commonMerge(a.m, b.m, \x,y -> x - y));
+}
+
+prodPoly(a : Poly, b: Poly) -> Poly{
+    Poly(foldTree(
+        a.m,
+        makeTree(),
+        \k,v,acc -> {
+            mergeTreeCustom(
+            acc,
+            foldTree(
+                b.m,
+                makeTree(),
+                \ki,vi,acci -> {
+                    setTree(acci, prodMon(k, ki), v*vi);
+                }
+            ),
+            \km,v1,v2 -> v1 + v2
+            )
+        }
+    ));
+}

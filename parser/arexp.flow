@@ -78,11 +78,24 @@ sumRules(l: ArExp, r: ArExp) -> ArExp{
     }
 }
 
+prodRules(l: ArExp, r: ArExp) -> ArExp{
+    if(l == ArInt(1)){
+        aeSmp(r);
+    } else if(r == ArInt(1)){
+        aeSmp(l);
+    } else if(isSameStructType(l, ArInt(0)) && isSameStructType(r, ArInt(0))){
+        ArInt(cast(l: ArExp -> ArInt).val * cast(r: ArExp -> ArInt).val);
+    } else {
+        ArSum(aeSmp(l),aeSmp(r));
+    }
+    //реализации степени тут нет
+}
+
 aeSmp(a: ArExp) -> ArExp{
     switch(a){
         ArSum(l,r):  sumRules(l,r);
         ArRes(l,r):  ArRes(aeSmp(l), aeSmp(r));
-        ArProd(l,r): ArProd(aeSmp(l), aeSmp(r));
+        ArProd(l,r): prodRules(l,r);
         ArDiv(l,r):  ArDiv(aeSmp(l), aeSmp(r));
         ArVar(v): ArVar(v);
         ArInt(v): ArInt(v);
