@@ -24,7 +24,7 @@ AST(a) = sum(int, prod(int,int))
 peg-parser
 
 $w^*$ means > -1 раз \
-$w^+$ means >  0 раз \
+$w^+$ means >  0 раз 
 
     s = sum | prod | int
     sum = "(" s "+" s ")"
@@ -44,11 +44,11 @@ The best policy is to add "ws" at the start of the top-level grammar, and then a
 
 * напечатать дерево красиво
 
-## 2 пара:
+## 2 пара
 
 можно еще посчитать (ae2t), или транслировать во что-то не теряя смысла \
 например, в обратную польскую ae2rpn (1 2 3 * +)                        \
-делимся на оператор - операнд                                           \
+делимся на оператор - операнд                                           
 
 ```
 RpnE ::= RpnOp | RpnArg; //(Rpn elem) 
@@ -59,15 +59,15 @@ RpnOp : (op:string, foo: (int, int) -> int);
 хотим функции: \ 
 rpn2s  -> string (распечатать)  \
 rpn2t  -> int    (вычислить)    \
-rpn2ae -> Aexp   (обратно)      \
+rpn2ae -> Aexp   (обратно)      
 
 ## 3 пара
-хотим полиморфно считать через стек \
+хотим полиморфно считать через стек 
 ```
 evalRpn(r : [RpnE], '?') -> Maybe<?>;
 RpnArg : (val : ?)
 ```
-тогда \
+тогда 
 ```
 ae2rpni(a:ArExp) -> [RpnE<int>]
 rpni2rpnae(a:[RpnE<int>]) -> [RpnE<AeExp>]{
@@ -91,3 +91,25 @@ dAlg(a : AlgExp, param : string) -> AlgExp
 - [x] подстановка переменных
 - [x] символьное дифференциирование
 - [ ] упрощение выражений
+
+## 5 пара
+преобразование к рациональному виду \
+преобразовать сложное выражение из дробей к \
+$RatExp := \frac{P(x)}{Q(x)}$ \
+завести структуры для дроби
+
+```
+alg2rat(a:AlgExp) -> RatExp {
+    switch .... по правилам
+}
+sum, prod полиномов 
+Poly(m: Tree<Mon, mt>)
+sumPoly : mergeTree (mergeTreeCustom) (*)
+prodPoly:  двойной fold
+оптимизация - отбрасывать нулевые слагаемые
+prodMon: mergeTree
+```
+
+Mon(v: Tree<string, int>, pairArray())                 \
+(*) равенства деревьев зависят от структуры дерева     \
+по-хорошему пишем сравнение деревьев, если не равны                 
