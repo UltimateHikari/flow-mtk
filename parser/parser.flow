@@ -95,6 +95,8 @@ printAeRatTest(t1 : ArExp){
     println("   ae2s(ArExp):");
     println(ae2s(t1));
     t2 = alg2rat(t1);
+    // println("   alg2rat(ArExp):");
+    // println(t2);
     println("   rat2s(alg2rat(ArExp)):");
     println(rat2s(t2));
 }
