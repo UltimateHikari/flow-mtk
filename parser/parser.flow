@@ -3,7 +3,7 @@ import arexp;
 //import rpnstack;
 import rpnpol;
 import maybe;
-
+import rational;
 
 // testRpnStack(t1: ArExp) -> void{
 //     println("\nTEST: rpnstack");
@@ -89,10 +89,29 @@ testAeSmp() -> void{
     println2(ae2s(t2));
 }
 
+printAeRatTest(t1 : ArExp){
+    println("   raw ArExp:");
+    println(t1);
+    println("   ae2s(ArExp):");
+    println(ae2s(t1));
+    t2 = alg2rat(t1);
+    println("   rat2s(alg2rat(ArExp)):");
+    println(rat2s(t2));
+}
+
+testAeRat(){
+    println("\nTEST: AeRat");
+    t1 = either(parse(  "( (z / (1 + (1 / (x + z)) )) + (y + ((x + 1)/(x - 1))) )"  ), ArInt(0));
+    printAeRatTest(t1);
+    t2 = either(parse(  "( ((2*a)/( (4 * (a * a)) -  (b*b))) + (1/(b - (2 * a))) )"  ), ArInt(0));
+    printAeRatTest(t2);
+}
+
 main() {
     t1 = testArExp();
     testRpnPol(t1);
     testAeSub();
     testAeDiff();
     testAeSmp();
+    testAeRat();
 }

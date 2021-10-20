@@ -6,6 +6,7 @@ export{
     RatExp : (num : Poly, denom: Poly);
 
     alg2rat(a: ArExp) -> RatExp;
+    rat2s(r:RatExp) -> string;
 }
 
 alg2rat(a: ArExp) -> RatExp{
@@ -81,4 +82,16 @@ prodPoly(a : Poly, b: Poly) -> Poly{
             )
         }
     ));
+}
+
+rat2s(r: RatExp) -> string{
+    poly2s(r.num) + "\n" + poly2s(r.denom);
+}
+
+poly2s(p: Poly) -> string{
+    rtrim2(foldTree(p.m, "", \k,v,a -> a + i2s(v) + mon2s(k) + " + "), "+ ");
+}
+
+mon2s(m: Mon) -> string{
+    foldTree(m.m, "", \k,v,a -> a + k + i2s(v));
 }
