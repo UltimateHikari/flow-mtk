@@ -1,0 +1,40 @@
+import maybe;
+import string;
+import lingo/pegcode/driver;
+import ds/tree;
+import dynamic;
+
+export{
+    Prog: (h: [Decl], b: Body);
+    Decl: (v: Var, t: Type);
+
+    Int(v: int);
+    Var(n: string);
+    Type(t: string);
+
+    Body ::= nAssign, nTest, nSeq, nUnion, nClosure;
+    nAssign: (v: Var, e: Exp);
+    nTest:  (e: Exp);
+    nSeq: (l: Body, r: Body);
+    nUnion: (l: Body, r:Body);
+    nClosure: (b: Body);
+
+    Arg ::= Int, Var;
+    Exp ::= Arg, Sum, Sub, Prod, Div, aSet, aGet;
+    Sum : (l: Exp, r: Exp);
+    Prod : (l: Exp, r: Exp);
+    Sub : (l: Exp, r: Exp);
+    Div : (l: Exp, r: Exp);
+    aSet : (a: Var, i: Arg, v: Arg);
+    aGet : (a: Var, i: Arg);
+
+    parse(s: string) -> Maybe<Prog>;
+}
+
+grammar = "#include nemo.lingo";
+
+parse(s: string) -> Maybe<Prog>{
+    parser = compilePegGrammar(grammar);
+    ret = parsic3(parser, s, defaultPegActions, Prog([], nTest(Int(0))));
+    if(ret.third == "") { Some(ret.first); } else { None() }
+}

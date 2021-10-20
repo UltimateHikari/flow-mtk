@@ -1,0 +1,28 @@
+prog = decl+ ";" ws body;
+decl = ws "VAR" ws var ws ":" type;
+
+int = digit+;
+var = char+;
+digit = '0'-'9';
+char = 'a'-'z' ;
+type = "INT" | "ARRAY OF" ws type;
+
+body = assign | test | seq | union | closure; 
+assign = "(" + ws + var + ws ":=" + ws + exp + ws + ")";
+test = "(" + ws + exp + ws "?" + ws + ")";
+seq = "(" ws body ws ";" ws body ws")";
+union = "(" ws body ws "u" ws body ws")";
+closure = "(" ws body ws "*" ws ")";
+
+exp = arg | sum | sub | prod | div | set | get;
+sum = "(" ws arg:l ws "+" ws arg:r ws ")" { Sum(:l,:r) };
+sub = "(" ws arg:l ws "-" ws arg:r ws ")" { Sub(:l,:r) };
+prod = "(" ws arg:l ws "*" ws arg:r ws ")" { Prod(:l,:r) };
+div = "(" ws arg:l ws "/" ws arg:r ws ")" { Div(:l,:r) };
+set = "(" ws "SET" ws var:a ws arg:i ws arg:v ws ")" { aSet(:a,:i,:v)};
+set = "(" ws "GET" ws var:a ws arg:i ws ")" {  aGet(:a, :i) };
+arg = int | var;
+
+
+ws = s*;
+s = " " | "\t" | "\n";
