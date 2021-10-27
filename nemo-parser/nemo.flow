@@ -2,10 +2,12 @@ import runtime;
 import maybe;
 import nemoprog;
 
-testNemoParser() -> Prog{
-    example = getFileContent("./example.txt");
+testNemoParser(s: string) -> Prog{
+    example = getFileContent(s);
+    println("\n   parsing:");
+    println(example);
     p1 = parse(example);
-    p1sure = either(p1, Prog([], nTest(Int(0))));
+    p1sure = either(p1, Prog([], nTest(Int(0))) );
     println("   raw Prog:");
     println(p1sure);
     // println("   prog2s(Prog):");
@@ -14,5 +16,8 @@ testNemoParser() -> Prog{
 }
 
 main(){
-    p1 = testNemoParser();
+    testNemoParser("./example.txt");
+    testNemoParser("./example-t.txt");
+    testNemoParser("./example-l.txt");
+    testNemoParser("./example-u.txt");
 }

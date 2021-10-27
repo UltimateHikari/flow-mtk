@@ -1,1 +1,3 @@
-VAR a : INT, VAR b: ARRAY OF INT ; ( ((a := 10) U (SET b 0 10)); a? )
+VAR a : INT; 
+VAR b : INT ; 
+(a := 10)

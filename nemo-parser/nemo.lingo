@@ -1,5 +1,5 @@
-prog = ws decl+ ";" ws body ws;
-decl = "VAR" ws var:v ws ":" type:t comma { Decl(:v, :t) };
+prog = ws decl+:d body:b { Prog(:d, :b) };
+decl = "VAR" ws var:v ws ":" ws type:t ws ";" ws   { Decl(:v, :t) };
 
 arg = int | var;
 int = digit+$v  { Int(s2i($v)) };
@@ -12,12 +12,12 @@ primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
 body = assign | test | seq | union | iter | print; 
-assign = "(" ws var:v ws ":=" ws exp:e ws ")" { nAssign(:v, :e) };
-test   = "(" ws exp:e ws "?"  ws ")"               { nTest(:e)       };
+assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e) };
+test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)       };
 seq    = "(" ws body:a ws ";" ws body:b ws ")"               { nSeq(:a, :b)    };
 union  = "(" ws body:a ws "U" ws body:b ws ")"               { nUnion(:a, :b)  };
-iter   = "(" ws body:a ws "*" ws ")"                        { nIter(:a)       };
-print  = "(" ws exp:e ws ")"                                { nPrint(:e)};
+iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)       };
+print  = "(" ws exp:e ws ")"                                 { nPrint(:e)};
 
 exp = arg | sum | sub | prod | div | set | get | len | concat;
 sum    = "(" ws arg:l ws "+" ws arg:r ws ")"            { Sum(:l, :r)      };
