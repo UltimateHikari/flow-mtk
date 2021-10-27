@@ -1,0 +1,18 @@
+import runtime;
+import maybe;
+import nemoprog;
+
+testNemoParser() -> Prog{
+    example = getFileContent("./example.txt");
+    p1 = parse(example);
+    p1sure = either(p1, Prog([], nTest(Int(0))));
+    println("   raw Prog:");
+    println(p1sure);
+    // println("   prog2s(Prog):");
+    // println(prog2s(p1sure));
+    p1sure;
+}
+
+main(){
+    p1 = testNemoParser();
+}

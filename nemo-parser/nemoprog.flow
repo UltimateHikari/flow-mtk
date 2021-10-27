@@ -10,14 +10,17 @@ export{
 
     Int(v: int);
     Var(n: string);
-    Type(t: string);
+    Type ::= bType, arrType;
+    bType : (t: string);
+    arrType : (t: Type);
 
-    Body ::= nAssign, nTest, nSeq, nUnion, nClosure;
+    Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint;
     nAssign: (v: Var, e: Exp);
     nTest:  (e: Exp);
     nSeq: (l: Body, r: Body);
     nUnion: (l: Body, r:Body);
-    nClosure: (b: Body);
+    nIter: (b: Body);
+    nPrint: (e: Exp);
 
     Arg ::= Int, Var;
     Exp ::= Arg, Sum, Sub, Prod, Div, aSet, aGet;
@@ -29,6 +32,7 @@ export{
     aGet : (a: Var, i: Arg);
 
     parse(s: string) -> Maybe<Prog>;
+    // no pr2s for now
 }
 
 grammar = "#include nemo.lingo";

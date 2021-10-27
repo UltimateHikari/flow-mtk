@@ -1,28 +1,34 @@
-prog = decl+ ";" ws body;
-decl = ws "VAR" ws var ws ":" type;
+prog = ws decl+ ";" ws body ws;
+decl = "VAR" ws var:v ws ":" type:t comma { Decl(:v, :t) };
 
-int = digit+;
-var = char+;
+arg = int | var;
+int = digit+$v  { Int(s2i($v)) };
+var = char+$v   { Var($v)      };
 digit = '0'-'9';
 char = 'a'-'z' ;
-type = "INT" | "ARRAY OF" ws type;
 
-body = assign | test | seq | union | closure; 
-assign = "(" + ws + var + ws ":=" + ws + exp + ws + ")";
-test = "(" + ws + exp + ws "?" + ws + ")";
-seq = "(" ws body ws ";" ws body ws")";
-union = "(" ws body ws "u" ws body ws")";
-closure = "(" ws body ws "*" ws ")";
+type = primtype | arrtype;
+primtype = "INT"                { bType("int") };
+arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
-exp = arg | sum | sub | prod | div | set | get;
-sum = "(" ws arg:l ws "+" ws arg:r ws ")" { Sum(:l,:r) };
-sub = "(" ws arg:l ws "-" ws arg:r ws ")" { Sub(:l,:r) };
-prod = "(" ws arg:l ws "*" ws arg:r ws ")" { Prod(:l,:r) };
-div = "(" ws arg:l ws "/" ws arg:r ws ")" { Div(:l,:r) };
-set = "(" ws "SET" ws var:a ws arg:i ws arg:v ws ")" { aSet(:a,:i,:v)};
-set = "(" ws "GET" ws var:a ws arg:i ws ")" {  aGet(:a, :i) };
-arg = int | var;
+body = assign | test | seq | union | iter | print; 
+assign = "(" + ws + var:v + ws ":=" + ws + exp:e + ws + ")" { nAssign(:v, :e) };
+test   = "(" + ws + exp:e + ws "?" + ws + ")"               { nTest(:e)       };
+seq    = "(" ws body:a ws ";" ws body:b ws")"               { nSeq(:a, :b)    };
+union  = "(" ws body:a ws "U" ws body:b ws")"               { nUnion(:a, :b)  };
+iter   = "(" ws body:a ws "*" ws ")"                        { nIter(:a)       };
+print  = "(" wd exp:e ws ")"                                { nPrint(:e)}
 
+exp = arg | sum | sub | prod | div | set | get | len | concat;
+sum    = "(" ws arg:l ws "+" ws arg:r ws ")"            { Sum(:l, :r)      };
+sub    = "(" ws arg:l ws "-" ws arg:r ws ")"            { Sub(:l, :r)      };
+prod   = "(" ws arg:l ws "*" ws arg:r ws ")"            { Prod(:l, :r)     };
+div    = "(" ws arg:l ws "/" ws arg:r ws ")"            { Div(:l, :r)      };
+set    = "(" ws "SET" ws var:a ws arg:i ws arg:v ws ")" { aSet(:a, :i, :v) };
+get    = "(" ws "GET" ws var:a ws arg:i ws ")"          { aGet(:a, :i)     };
+len    = "(" ws "LEN" ws var:a ws ")"                   { aLen(:a,)        };
+concat = "(" ws "CONCAT" ws var:a ws arg:b ws ")"       { aConcat(:a, :b)  };
 
 ws = s*;
 s = " " | "\t" | "\n";
+comma = ws | ", "
