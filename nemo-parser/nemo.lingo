@@ -12,12 +12,12 @@ primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
 body = assign | test | seq | union | iter | print; 
-assign = "(" + ws + var:v + ws ":=" + ws + exp:e + ws + ")" { nAssign(:v, :e) };
-test   = "(" + ws + exp:e + ws "?" + ws + ")"               { nTest(:e)       };
-seq    = "(" ws body:a ws ";" ws body:b ws")"               { nSeq(:a, :b)    };
-union  = "(" ws body:a ws "U" ws body:b ws")"               { nUnion(:a, :b)  };
+assign = "(" ws var:v ws ":=" ws exp:e ws ")" { nAssign(:v, :e) };
+test   = "(" ws exp:e ws "?"  ws ")"               { nTest(:e)       };
+seq    = "(" ws body:a ws ";" ws body:b ws ")"               { nSeq(:a, :b)    };
+union  = "(" ws body:a ws "U" ws body:b ws ")"               { nUnion(:a, :b)  };
 iter   = "(" ws body:a ws "*" ws ")"                        { nIter(:a)       };
-print  = "(" wd exp:e ws ")"                                { nPrint(:e)}
+print  = "(" ws exp:e ws ")"                                { nPrint(:e)};
 
 exp = arg | sum | sub | prod | div | set | get | len | concat;
 sum    = "(" ws arg:l ws "+" ws arg:r ws ")"            { Sum(:l, :r)      };
@@ -26,9 +26,9 @@ prod   = "(" ws arg:l ws "*" ws arg:r ws ")"            { Prod(:l, :r)     };
 div    = "(" ws arg:l ws "/" ws arg:r ws ")"            { Div(:l, :r)      };
 set    = "(" ws "SET" ws var:a ws arg:i ws arg:v ws ")" { aSet(:a, :i, :v) };
 get    = "(" ws "GET" ws var:a ws arg:i ws ")"          { aGet(:a, :i)     };
-len    = "(" ws "LEN" ws var:a ws ")"                   { aLen(:a,)        };
+len    = "(" ws "LEN" ws var:a ws ")"                   { aLen(:a)        };
 concat = "(" ws "CONCAT" ws var:a ws arg:b ws ")"       { aConcat(:a, :b)  };
 
 ws = s*;
 s = " " | "\t" | "\n";
-comma = ws | ", "
+comma = ws | ", ";
