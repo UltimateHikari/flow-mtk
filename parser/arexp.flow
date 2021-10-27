@@ -18,7 +18,7 @@ export {
     // Variable substitution
     aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>;
     // Differentiation
-    aeDiff(a: ArExp) -> ArExp;
+    aeDiff(a: ArExp, d: string) -> ArExp;
     // Simplification
     aeSmp(a: ArExp) -> ArExp;
 }
@@ -53,13 +53,13 @@ aeSub(a: ArExp, t: Tree<string, int>) -> Maybe<ArExp>{
     } 
 }
 
-aeDiff(a: ArExp) -> ArExp{
+aeDiff(a: ArExp, d: string) -> ArExp{
     switch(a){
-        ArSum(l,r):  ArSum(aeDiff(l), aeDiff(r));
-        ArRes(l,r):  ArRes(aeDiff(l), aeDiff(r));
-        ArProd(l,r): ArSum(ArProd(aeDiff(l), r), ArProd(l, aeDiff(r)));
-        ArDiv(l,r):  ArDiv( ArRes(ArProd(aeDiff(l), r), ArProd(l, aeDiff(r))), ArProd(r,r));
-        ArVar(v): ArInt(1);
+        ArSum(l,r):  ArSum(aeDiff(l,d), aeDiff(r,d));
+        ArRes(l,r):  ArRes(aeDiff(l,d), aeDiff(r,d));
+        ArProd(l,r): ArSum(ArProd(aeDiff(l,d), r), ArProd(l, aeDiff(r,d)));
+        ArDiv(l,r):  ArDiv( ArRes(ArProd(aeDiff(l,d), r), ArProd(l, aeDiff(r,d))), ArProd(r,r));
+        ArVar(v): if(d == v){ ArInt(1); } else { ArVar(v); }
         ArInt(v): ArInt(0);
     }
 }

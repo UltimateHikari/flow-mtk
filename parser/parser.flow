@@ -72,7 +72,7 @@ testAeDiff() -> void{
     println(t1);
     println("   ae2s(ArExp):");
     println(ae2s(t1));
-    t2 = aeDiff(t1);
+    t2 = aeDiff(t1, "e");
     println("   ae2s(aeDiff(ArExp)):");
     println2(ae2s(t2));
 }
