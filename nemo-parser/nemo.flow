@@ -16,8 +16,8 @@ testNemoParser(s: string) -> Prog{
 }
 
 main(){
-    testNemoParser("./example.txt");
-    testNemoParser("./example-t.txt");
-    testNemoParser("./example-l.txt");
-    testNemoParser("./example-u.txt");
+    testNemoParser("./test/example.txt");
+    testNemoParser("./test/type.txt");
+    testNemoParser("./test/union.txt");
+    testNemoParser("./test/long.txt");
 }
