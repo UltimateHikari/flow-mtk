@@ -2,6 +2,7 @@ import maybe;
 import string;
 import lingo/pegcode/driver;
 import ds/tree;
+import ds/array;
 import dynamic;
 
 export{
@@ -17,8 +18,8 @@ export{
     Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint;
     nAssign: (v: Var, e: Exp);
     nTest:  (e: Exp);
-    nSeq: (l: Body, r: Body);
-    nUnion: (l: Body, r:Body);
+    nSeq: (b: [Body]);
+    nUnion: (b: [Body]);
     nIter: (b: Body);
     nPrint: (e: Exp);
 
@@ -37,10 +38,23 @@ export{
 
 grammar = "#include nemo.lingo";
 
+buildUnion(xs : [flow]) -> nUnion{
+    nUnion(arrayPush(xs[0], xs[1]));
+}
+
+buildSeq(xs : [flow]) -> nSeq{
+    nSeq(arrayPush(xs[0], xs[1]));
+}
+
 parse(s: string) -> Maybe<Prog>{
     parser = compilePegGrammar(grammar);
-    ret = parsic3(parser, s, defaultPegActions, Prog([], nTest(Int(0))) );
-    if(ret.third == "") { Some(ret.first); } else { println(ret.third); None() }
+    specialPegActions = {
+        t = setTree(defaultPegActions.t, "buildUnion", buildUnion);
+        t2 = setTree(t, "buildSeq", buildSeq);
+        SemanticActions(t2);
+    }
+    ret = parsic3(parser, s, specialPegActions, Prog([], nTest(Int(0))) );
+    if(ret.third == "") { Some(ret.first); } else { None() }
 }
 
 

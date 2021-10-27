@@ -1,4 +1,4 @@
-prog = ws decl+:d body:b { Prog(:d, :b) };
+prog = ws decl+:d "{" ws body:b ws "}" ws { Prog(:d, :b) };
 decl = "VAR" ws var:v ws ":" ws type:t ws ";" ws   { Decl(:v, :t) };
 
 arg = int | var;
@@ -12,12 +12,14 @@ primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
 body = assign | test | seq | union | iter | print; 
-assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e) };
-test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)       };
-seq    = "(" ws body:a ws ";" ws body:b ws ")"               { nSeq(:a, :b)    };
-union  = "(" ws body:a ws "U" ws body:b ws ")"               { nUnion(:a, :b)  };
-iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)       };
-print  = "(" ws exp:e ws ")"                                 { nPrint(:e)};
+assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e)    };
+test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)          };
+seq    = "(" ws sentry+:e body:b ws ")"                      { buildSeq(:e, :b)   };
+sentry = body:b ws ";" ws                                    { :b                 };
+union  = "(" ws uentry+:e body:b ws ")"                      { buildUnion(:e, :b) };
+uentry = body:b ws "U" ws                                    { :b                 };
+iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)          };
+print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)         };
 
 exp = arg | sum | sub | prod | div | set | get | len | concat;
 sum    = "(" ws arg:l ws "+" ws arg:r ws ")"            { Sum(:l, :r)      };
