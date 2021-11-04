@@ -1,0 +1,129 @@
+import ds/tree;
+import ds/array;
+import string;
+
+export{
+    vProg : (h: [vDecl], b: vBody);
+    vDecl: (v: vVar, t: vType);
+    vBody : (m: [vLabel]);
+    vLabel: (id: int, i: vInstr, l: [int]);
+
+    vInstr ::= vAssign, vIf, vPrint;
+    vAssign : (v: vVar, e: vExp);
+    vIf : (c: vExp);
+    vPrint : (e: vExp);
+
+    Int(v: int);
+    vVar(n: string);
+    vType ::= vBType, vArrType;
+    vBType : (t: string);
+    vArrType : (t: vType);
+
+    vArg ::= Int, vVar;
+    vExp ::= vArg, vSum, vSub, vProd, vDiv, vSet, vGet;
+    vSum : (l: vExp, r: vExp);
+    vProd : (l: vExp, r: vExp);
+    vSub : (l: vExp, r: vExp);
+    vDiv : (l: vExp, r: vExp);
+    vSet : (a: vVar, i: vArg, v: vArg);
+    vGet : (a: vVar, i: vArg);
+
+    vExecute(p: vProg) -> void;
+}
+
+Value ::= bValue, arrValue;
+arrValue : (v: [Value]);
+bValue: (v: int);
+
+vExecute(p: vProg) -> void{
+    vars = initDeclsTree(p.h);
+}
+
+labelExecute(lbl: vLabel, vars: Tree<vVar, Value>) -> [int] {
+    switch (lbl.i) {
+        vAssign(v, e): {
+            setTree(vars, v, expEval(e, vars));
+            lbl.l;
+        } 
+        vIf(c): {
+            if(expEval(c, vars) != bValue(0)){
+                lbl.l;
+            } else {
+                [];
+            }
+        }
+        vPrint(e): {
+            println(v2s(expEval(e, vars)));
+            [];
+        }
+    }
+}
+
+// all error checks are outside
+// in my lazy case programmer is obliged
+// to write correct program
+expEval(e: vExp, vars: Tree<vVar, Value>) -> Value{
+    switch (e) {
+        Int(v): bValue(v);
+        vVar(v): eitherMap(lookupTree(vars, vVar(v)), v2bv,  bValue(0));
+        vSum(l, r)  : bValue(
+            v2bv(expEval(l, vars)).v + 
+            v2bv(expEval(r, vars)).v
+            );
+        vProd(l, r) : bValue(
+            v2bv(expEval(l, vars)).v * 
+            v2bv(expEval(r, vars)).v
+            );
+        vSub(l, r)  : bValue(
+            v2bv(expEval(l, vars)).v - 
+            v2bv(expEval(r, vars)).v
+            );
+        vDiv(l, r)  : bValue(
+            v2bv(expEval(l, vars)).v / 
+            v2bv(expEval(r, vars)).v
+            );
+        vSet(a, i, v) : /*stub*/ bValue(0);
+        vGet(a, ind) : {
+            i = v2bv(expEval(ind, vars)).v;
+            eitherMap(lookupTree(vars, a), \x -> valueGet(x, i), bValue(0))
+        };
+    }
+}
+
+v2bv(val: Value) -> bValue{
+    switch (val) {
+        arrValue(v): bValue(0); //IGNORED ERROR! 
+        bValue(v): bValue(v);
+    }
+}
+
+valueGet(val: Value, i: int) -> Value{
+    switch(val){
+        arrValue(v): v[i];
+        bValue(v): bValue(0);
+    }
+}
+
+v2s(val: Value) -> string{
+    switch (val) {
+        arrValue(v): 
+            "[" + 
+            strGlue(
+            map(v, \x -> v2s(x)),
+            ", ") + 
+            "]";
+        bValue(v): i2s(v);
+    }
+}
+
+initDeclsTree(h: [vDecl]) -> Tree<vVar, Value> {
+    fold(h, makeTree(), \acc, decl -> setTree(acc, decl.v, initType(decl.t)));
+}
+
+initType(t: vType) -> Value{
+    switch (t) {
+        vArrType(v): arrValue([initType(v)]);
+        vBType(v): bValue(0);
+    }
+}
+

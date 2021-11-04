@@ -23,6 +23,7 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
+    //TODO move aSet away
     Arg ::= Int, Var;
     Exp ::= Arg, Sum, Sub, Prod, Div, aSet, aGet;
     Sum : (l: Exp, r: Exp);
