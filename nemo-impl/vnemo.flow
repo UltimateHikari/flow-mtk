@@ -37,8 +37,20 @@ bValue: (v: int);
 
 vExecute(p: vProg) -> void{
     vars = initDeclsTree(p.h);
+    while(p.b, vars, [1]);
 }
 
+while(b: vBody, vars: Tree<vVar, Value>, labels: [int]) -> void{
+    newLabels = fold(labels, [], \acc, ind -> concat(acc, labelExecute(b.m[ind], vars)));
+    if(length(newLabels) > 0){
+        while(b, vars, newLabels);
+    } else {
+        println("vNeMo Executor: done"); //workaround
+    }
+}
+
+// TODO check that upper-level vars are mutating
+// (pass them b/reference, mb?)
 labelExecute(lbl: vLabel, vars: Tree<vVar, Value>) -> [int] {
     switch (lbl.i) {
         vAssign(v, e): {
