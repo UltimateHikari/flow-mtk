@@ -1,6 +1,6 @@
 import runtime;
 import maybe;
-import nemoprog;
+import nemo_parser;
 
 testNemoParser(s: string) -> Prog{
     example = getFileContent(s);

@@ -23,15 +23,15 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
-    //TODO move aSet away
     Arg ::= Int, Var;
     Exp ::= Arg, Sum, Sub, Prod, Div, aSet, aGet;
     Sum : (l: Exp, r: Exp);
     Prod : (l: Exp, r: Exp);
     Sub : (l: Exp, r: Exp);
     Div : (l: Exp, r: Exp);
-    aSet : (a: Var, i: Arg, v: Arg);
-    aGet : (a: Var, i: Arg);
+    // returns 0 or 1 on error/success
+    aSet : (a: Var, i: Arg, v: Arg); 
+    aGet : (a: Var, i: Arg); 
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now

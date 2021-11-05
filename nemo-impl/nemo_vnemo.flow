@@ -13,13 +13,13 @@ export{
     vIf : (c: vExp);
     vPrint : (e: vExp);
 
-    Int(v: int);
+    vInt(v: int);
     vVar(n: string);
     vType ::= vBType, vArrType;
     vBType : (t: string);
     vArrType : (t: vType);
 
-    vArg ::= Int, vVar;
+    vArg ::= vInt, vVar;
     vExp ::= vArg, vSum, vSub, vProd, vDiv, vSet, vGet;
     vSum : (l: vExp, r: vExp);
     vProd : (l: vExp, r: vExp);
@@ -76,7 +76,7 @@ labelExecute(lbl: vLabel, vars: Tree<vVar, Value>) -> [int] {
 // to write correct program
 expEval(e: vExp, vars: Tree<vVar, Value>) -> Value{
     switch (e) {
-        Int(v): bValue(v);
+        vInt(v): bValue(v);
         vVar(v): eitherMap(lookupTree(vars, vVar(v)), v2bv,  bValue(0));
         vSum(l, r)  : bValue(
             v2bv(expEval(l, vars)).v + 

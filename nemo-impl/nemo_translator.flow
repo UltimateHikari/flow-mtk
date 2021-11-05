@@ -1,0 +1,128 @@
+import ds/array;
+import ds/tree;
+import nemo_parser;
+import nemo_vnemo;
+
+export{
+    nemo2vnemo(p: Prog) -> vProg;
+}
+
+nemo2vnemo(p: Prog){
+    vProg(
+        h2v(p.h),
+        b2v(p.b)
+    )
+}
+
+//decl2vDecl
+h2v(decls: [Decl]) -> [vDecl]{
+    map(decls, \elem -> vDecl(vVar(elem.v.n), t2v(elem.t)));
+}
+
+//type2vType
+t2v(t: Type) -> vType{
+    switch (t) {
+        arrType(v): vArrType(t2v(v));
+        bType(v): vBType(v);
+    }
+}
+
+//body2Vbody
+b2v(body: Body) -> vBody{
+    switch (body) {
+        nAssign(v, e): vBody([vLabel(0, vAssign(vVar(v.n), e2v(e)), [1])]);
+        nTest(e): vBody([vLabel(0, vIf(e2v(e)), [1])]);
+        nSeq(b): fold(b, vBody([]), add2seq);
+        nUnion(b): fold(b, vBody([vLabel(0, vIf(vInt(1)), [])]), add2un);
+        nIter(b): ib2v(b);
+        nPrint(e): vBody([vLabel(0, vPrint(e2v(e)), [1])]);
+    }
+}
+
+add2seq(acc: vBody, elem: Body) -> vBody{
+    vElem = b2v(elem);
+    curLen = vbMax(acc);
+    vBody(concat(acc.m, vbShift(vElem, curLen).m));
+}
+
+add2un(acc: vBody, elem: Body) -> vBody{
+    vElem = b2v(elem);
+    curLen = vbMax(acc);
+    newLen = curLen + vbMax(vElem);
+    vBody(concat(
+        mapi(
+            vbReplace(acc, curLen, newLen).m,
+            \ind, e -> 
+                if(ind == 0){
+                    vLabel(0,
+                        e.i, 
+                        arrayPush(e.l, curLen)
+                    )
+                }else{
+                    e
+                }
+            ),
+        vbShift(vElem, curLen).m
+    ));
+}
+
+//iter body
+ib2v(b: Body){
+    vElem = b2v(b);
+    iterLen = vbMax(vElem);
+    vBody(concat(
+        [vLabel(0, vIf(vInt(1)), [1, 1 + iterLen])],
+        vbReplace(vbShift(vElem, 1), 1 + iterLen, 0).m
+    ))
+}
+
+vbMax(b: vBody) -> int{
+    length(b.m)
+}
+
+vbShift(b: vBody, s: int) -> vBody{
+    vBody(
+        map(b.m, \label -> 
+            vLabel(
+                label.id + s,
+                label.i, 
+                map(label.l, \x -> x + s)
+            )
+        )
+    )
+}
+
+// n -> m
+vbReplace(b: vBody, n: int, m: int) -> vBody{
+    vBody(
+        map(b.m, \label -> 
+            vLabel(
+                label.id,
+                label.i, 
+                map(label.l, \x -> if(x == n){ m }else{ n })
+            )
+        )
+    )
+}
+
+//exp2vExp
+e2v(e: Exp) -> vExp{
+    switch (e) {
+        Int(v): vInt(v);
+        Var(n): vVar(n);
+        Sum(l, r): vSum(e2v(l), e2v(r));
+        Prod(l, r): vProd(e2v(l), e2v(r));
+        Sub(l, r): vSub(e2v(l), e2v(r));
+        Div(l, r): vDiv(e2v(l), e2v(r));
+        aSet(a, i, v): vSet(vVar(a.n), a2v(i), a2v(v)); 
+        aGet(a, i): vGet(vVar(a.n), a2v(i)); 
+    }
+}
+
+//arg2varg
+a2v(a: Arg) -> vArg{
+    switch (a) {
+        Int(v): vInt(v);
+        Var(n): vVar(n);
+    }
+}
