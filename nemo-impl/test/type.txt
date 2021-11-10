@@ -1,4 +1,4 @@
 VAR a : INT;
 VAR array : [INT];
 VAR nightmare : [[[[[INT]]]]];
-{(a?)}
+{ (a := 10) }
