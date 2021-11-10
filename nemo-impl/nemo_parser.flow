@@ -9,7 +9,10 @@ export{
     Prog: (h: [Decl], b: Body);
     Decl: (v: Var, t: Type);
 
-    Int(v: int);
+    Val ::= Int, Arr;
+    Int: (v: int);
+    Arr: (a: [Val]);
+    
     Var(n: string);
     Type ::= bType, arrType;
     bType : (t: string);
@@ -23,15 +26,15 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
-    Arg ::= Int, Var;
-    Exp ::= Arg, Sum, Sub, Prod, Div, aSet, aGet;
+    Exp ::= Val, Sum, Sub, Prod, Div, aSet, aGet;
     Sum : (l: Exp, r: Exp);
     Prod : (l: Exp, r: Exp);
     Sub : (l: Exp, r: Exp);
     Div : (l: Exp, r: Exp);
-    // returns 0 or 1 on error/success
-    aSet : (a: Var, i: Arg, v: Arg); 
-    aGet : (a: Var, i: Arg); 
+    // TODO: move out of Exp
+    aSet : (a: Var, i: Int, v: Exp); 
+    aGet : (a: Var, i: Int);
+    aLen : (a: Var);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now
