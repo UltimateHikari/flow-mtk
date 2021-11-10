@@ -26,7 +26,7 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
-    Exp ::= Val, Sum, Sub, Prod, Div, aSet, aGet;
+    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen;
     Sum : (l: Exp, r: Exp);
     Prod : (l: Exp, r: Exp);
     Sub : (l: Exp, r: Exp);

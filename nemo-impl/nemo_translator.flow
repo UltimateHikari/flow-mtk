@@ -4,10 +4,10 @@ import nemo_parser;
 import nemo_vnemo;
 
 export{
-    nemo2vnemo(p: Prog) -> vProg;
+    n2v(p: Prog) -> vProg;
 }
 
-nemo2vnemo(p: Prog){
+n2v(p: Prog){
     vProg(
         h2v(p.h),
         b2v(p.b)
@@ -107,22 +107,25 @@ vbReplace(b: vBody, n: int, m: int) -> vBody{
 
 //exp2vExp
 e2v(e: Exp) -> vExp{
-    switch (e) {
-        Int(v): vInt(v);
+    //TODO type checks
+    switch (e: Exp) {
+        Int(v): v2vv(e);
+        Arr(v): v2vv(e);
         Var(n): vVar(n);
         Sum(l, r): vSum(e2v(l), e2v(r));
         Prod(l, r): vProd(e2v(l), e2v(r));
         Sub(l, r): vSub(e2v(l), e2v(r));
         Div(l, r): vDiv(e2v(l), e2v(r));
-        aSet(a, i, v): vSet(vVar(a.n), a2v(i), a2v(v)); 
-        aGet(a, i): vGet(vVar(a.n), a2v(i)); 
+        aSet(a, i, v): vSet(vVar(a.n), vInt(i.v), e2v(v)); 
+        aGet(a, i): vGet(vVar(a.n), vInt(i.v));
+        aLen(a): vLen(vVar(a.n));
     }
 }
 
-//arg2varg
-a2v(a: Arg) -> vArg{
-    switch (a) {
+//Val2vVal
+v2vv(val: Val) -> vVal{
+    switch (val) {
         Int(v): vInt(v);
-        Var(n): vVar(n);
+        Arr(v): vArr(map(v, v2vv));
     }
 }
