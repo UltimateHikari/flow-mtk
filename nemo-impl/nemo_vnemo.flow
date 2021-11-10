@@ -48,10 +48,21 @@ while(b: vBody, state: State) -> void{
             newState = labelExecute(b.m[ind], acc.vars);
             State(concat(acc.labels, newState.labels), newState.vars);
             });
-    if(length(iterationState.labels) > 0){
+    if(isStopped(iterationState.labels, length(b.m))){
         while(b, iterationState);
     } else {
         println("vNeMo Executor: done"); //workaround
+    }
+}
+
+isStopped(labels: [int], stoplabel: int) -> bool{
+    if(
+        length(labels) == 0 || 
+        (length(labels) == 1 && labels[0] == stoplabel)
+        ){
+            true;
+    }else{
+        false;
     }
 }
 

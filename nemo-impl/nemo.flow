@@ -1,24 +1,29 @@
 import runtime;
 import maybe;
 import nemo_parser;
+import nemo_translator;
 
 testNemoParser(i: int, s: string, verbose: bool) -> Prog{
     example = getFileContent(s);
-    println("TEST" + i2s(i) + ":   parsing " + s + ":");
+    println("TEST" + i2s(i) + ":" + s + ":");
     if(verbose){println(example)};
+    // parsing
     p1 = parse(example);
     err = Prog([], nTest(Int(0)));
     p1sure = either(p1, err);
     println("   result:");
     if(p1sure == err){
-        println("   ERROR");
+        println("   Error:Parse");
     } else {
         if(verbose){
             println(p1sure);
         } else {
-            println("   SUCCESS");
+            println("   Success:Parse");
         }
     }
+    //translating
+    p2 = n2v(p1sure);
+    println(p2);
     // println("   prog2s(Prog):");
     // println(prog2s(p1sure));
     p1sure;
