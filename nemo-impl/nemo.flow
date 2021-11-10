@@ -2,22 +2,29 @@ import runtime;
 import maybe;
 import nemo_parser;
 
-testNemoParser(s: string) -> Prog{
+testNemoParser(i: int, s: string, verbose: bool) -> Prog{
     example = getFileContent(s);
-    println("\n   parsing:");
-    println(example);
+    println("TEST" + i2s(i) + ":   parsing " + s + ":");
+    if(verbose){println(example)};
     p1 = parse(example);
-    p1sure = either(p1, Prog([], nTest(Int(0))) );
-    println("   raw Prog:");
-    println(p1sure);
+    err = Prog([], nTest(Int(0)));
+    p1sure = either(p1, err);
+    println("   result:");
+    if(p1sure == err){
+        println("   ERROR");
+    } else {
+        if(verbose){
+            println(p1sure);
+        } else {
+            println("   SUCCESS");
+        }
+    }
     // println("   prog2s(Prog):");
     // println(prog2s(p1sure));
     p1sure;
 }
 
 main(){
-    testNemoParser("./test/example.txt");
-    testNemoParser("./test/type.txt");
-    testNemoParser("./test/union.txt");
-    testNemoParser("./test/long.txt");
+    tests = ["example", "type", "test", "union", "long"];
+    mapi(tests, \i, x -> testNemoParser(i, "./test/" + x + ".txt", false));
 }
