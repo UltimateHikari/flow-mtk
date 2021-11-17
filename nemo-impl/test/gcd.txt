@@ -6,22 +6,21 @@ VAR rem : INT;
     (b := 16);
     (
         WHILE
-        (!b)
+        b
         DO
         (
             (rem := a);
             (
                 WHILE
-                // TODO "rem > b"
+                (rem >= b)
                 DO
                 (rem := (rem - b))
                 DONE
             );
             (a := b);
-            (b := rem);
+            (b := rem)
         )
         DONE
     );
-    (PRINT a);
-    (PRINT b)
+    (PRINT a)
 )}

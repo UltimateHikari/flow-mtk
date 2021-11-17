@@ -26,7 +26,7 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
-    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen, Not;
+    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen, Not, Less;
     Sum : (l: Exp, r: Exp);
     Prod : (l: Exp, r: Exp);
     Sub : (l: Exp, r: Exp);
@@ -36,6 +36,7 @@ export{
     aGet : (a: Var, i: Int);
     aLen : (a: Var);
     Not(e: Exp);
+    Less : (l: Exp, r: Exp);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now

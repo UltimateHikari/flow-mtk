@@ -23,7 +23,7 @@ export{
     vBType : (t: string);
     vArrType : (t: vType);
 
-    vExp ::= vVal, vVar, vSum, vSub, vProd, vDiv, vSet, vGet, vLen, vNot;
+    vExp ::= vVal, vVar, vSum, vSub, vProd, vDiv, vSet, vGet, vLen, vNot, vLess;
     vSum : (l: vExp, r: vExp);
     vProd : (l: vExp, r: vExp);
     vSub : (l: vExp, r: vExp);
@@ -32,6 +32,7 @@ export{
     vGet : (a: vVar, i: vInt);
     vLen : (a: vVar);
     vNot : (e: vExp);
+    vLess : (l: vExp, r: vExp);
 
     vExecute(p: vProg) -> void;
 }
@@ -55,7 +56,7 @@ while(b: vBody, state: State, testIterLimit:int) -> void{
         filtermap(iterationState.labels, \l -> if(l==stoplabel){ None() }else{ Some(l) }),
         iterationState.vars
         );
-    if(length(filteredState.labels) > 0 && testIterLimit < 100){
+    if(length(filteredState.labels) > 0 && testIterLimit < 1000){
         while(b, filteredState, testIterLimit + 1);
     } else {
         println("vNeMo Executor: done(" + i2s(testIterLimit) + ")"); //workaround
@@ -127,7 +128,32 @@ expEval(e: vExp, vars: Tree<string, vVal>) -> vVal{
                 }else{
                     vInt(0);
                 }
-            }
+            };
+        vLess(l,r) : vCompare(l, r, vars);
+    }
+}
+
+vCompare(l: vExp, r: vExp, vars: Tree<string, vVal>) -> vInt{
+    lVal = switch (expEval(l, vars)) {
+        vInt(v): v;
+        vArr(v): {
+            println("Runtime error: array comparison attempt");
+            quit(-1);
+            -1;
+        }
+    }
+    rVal = switch (expEval(r, vars)) {
+        vInt(v): v;
+        vArr(v): {
+            println("Runtime error: array comparison attempt");
+            quit(-1);
+            -1;
+        }
+    }
+    if(lVal < rVal){
+        vInt(1);
+    }else{
+        vInt(0);
     }
 }
 

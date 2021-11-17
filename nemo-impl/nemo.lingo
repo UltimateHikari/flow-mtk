@@ -25,7 +25,7 @@ iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)        
 print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)         };
 while  = "(" ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:e, :b) };
 
-exp = var | val | sum | sub | prod | div | set | get | len | not;
+exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };
 sub    = "(" ws exp:l ws "-" ws exp:r ws ")"            { Sub(:l, :r)      };
 prod   = "(" ws exp:l ws "*" ws exp:r ws ")"            { Prod(:l, :r)     };
@@ -33,7 +33,11 @@ div    = "(" ws exp:l ws "/" ws exp:r ws ")"            { Div(:l, :r)      };
 set    = "(" ws "SET" ws var:a ws int:i ws exp:v ws ")" { aSet(:a, :i, :v) };
 get    = "(" ws "GET" ws var:a ws int:i ws ")"          { aGet(:a, :i)     };
 len    = "(" ws "LEN" ws var:a ws ")"                   { aLen(:a)         };
-not    = "(" ws "!" ws exp:e ws ")"                     { Not(:e)          };  
+not    = "(" ws "!" ws exp:e ws ")"                     { Not(:e)          };
+less   = "(" ws exp:l ws "<" ws exp:r ws ")"            { Less(:l, :r)     };
+more   = "(" ws exp:l ws ">" ws exp:r ws ")"            { Less(:r, :l)     };
+eless   = "(" ws exp:l ws "<=" ws exp:r ws ")"          { Not(Less(:r, :l))};
+emore   = "(" ws exp:l ws ">=" ws exp:r ws ")"          { Not(Less(:l, :r))};
 
 ws = s*;
 s = " " | "\t" | "\n";
