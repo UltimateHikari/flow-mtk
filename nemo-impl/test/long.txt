@@ -3,12 +3,13 @@ VAR a : INT;
     (a := 101);
     (PRINT a);
     (   ((
+            ((a-105)?);
             (a:=(a+1)); 
             (PRINT a)
         )*) 
         U 
         (PRINT (a-100))
     ); 
-    (a := 102);
+    (a := 103);
     (PRINT a)
 )}

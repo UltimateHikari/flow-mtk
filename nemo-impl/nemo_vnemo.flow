@@ -43,32 +43,41 @@ vExecute(p: vProg) -> void{
 }
 
 while(b: vBody, state: State) -> void{
+    stoplabel = length(b.m);
     iterationState = fold(state.labels, State([], state.vars), 
         \acc, ind -> {
             newState = labelExecute(b.m[ind], acc.vars);
             State(concat(acc.labels, newState.labels), newState.vars);
             });
     println(iterationState);
-    if(notStopped(iterationState.labels, length(b.m))){
-        while(b, iterationState);
+    filteredState = State(
+        filtermap(iterationState.labels, \l -> if(l==stoplabel){ None() }else{ Some(l) }),
+        iterationState.vars
+        );
+    if(length(filteredState.labels) > 0){
+        while(b, filteredState);
     } else {
         println("vNeMo Executor: done"); //workaround
     }
 }
 
 notStopped(labels: [int], stoplabel: int) -> bool{
+    filtered = filtermap(labels, \l -> if(l==stoplabel){None()}else{Some(l)});
     if(
-        length(labels) == 0 || 
-        (length(labels) == 1 && labels[0] == stoplabel)
+        length(filtered) == 0
         ){
             false;
+        // length(labels) == 0 || 
+        // (length(labels) == 1 && labels[0] == stoplabel)
+        // ){
+        //     false;
     }else{
         true;
     }
 }
 
 labelExecute(lbl: vLabel, vars: Tree<string, vVal>) -> State {
-    //println("executing: " + i2s(lbl.id));
+    println("executing: " + i2s(lbl.id));
     switch (lbl.i) {
         vAssign(v, e): {
             State(lbl.l, setTree(vars, v.n, expEval(e, vars)));
@@ -82,7 +91,7 @@ labelExecute(lbl: vLabel, vars: Tree<string, vVal>) -> State {
         }
         vPrint(e): {
             println(v2s(expEval(e, vars)));
-            State([], vars);
+            State(lbl.l, vars);
         }
     }
 }
