@@ -70,10 +70,14 @@ add2un(acc: vBody, elem: Body) -> vBody{
 ib2v(b: Body){
     vElem = b2v(b);
     iterLen = vbMax(vElem);
-    vBody(concat(
+    println(vElem);
+    bd = vBody(concat(
         [vLabel(0, vIf(vInt(1)), [1, 1 + iterLen])],
         vbReplace(vbShift(vElem, 1), 1 + iterLen, 0).m
-    ))
+    ));
+    println(iterLen);
+    println(bd);
+    bd;
 }
 
 vbMax(b: vBody) -> int{

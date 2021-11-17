@@ -2,10 +2,13 @@ VAR a : INT;
 {(
     (a := 101);
     (PRINT a);
-    ( ((
-        (a:=(a+1)); 
-        (PRINT a)
-        )*) U (a?)); 
+    (   ((
+            (a:=(a+1)); 
+            (PRINT a)
+        )*) 
+        U 
+        (PRINT (a-100))
+    ); 
     (a := 102);
     (PRINT a)
 )}
