@@ -1,2 +1,9 @@
 VAR a : INT;
-{ ((a?) U (b?) U (c?) U (d?)) }
+VAR b : INT;
+{(
+    (a:=3);
+    (b:=(a+1));
+    (
+    (PRINT a) U (PRINT (a - b)) U (PRINT (a+b)) U (PRINT(a*b)) 
+    )
+)}

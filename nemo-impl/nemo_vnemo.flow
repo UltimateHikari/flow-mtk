@@ -35,7 +35,7 @@ export{
     vExecute(p: vProg) -> void;
 }
 
-State:(labels: [int], vars: Tree<vVar, vVal>);
+State:(labels: [int], vars: Tree<string, vVal>);
 
 vExecute(p: vProg) -> void{
     vars = initDeclsTree(p.h);
@@ -48,7 +48,6 @@ while(b: vBody, state: State) -> void{
             newState = labelExecute(b.m[ind], acc.vars);
             State(concat(acc.labels, newState.labels), newState.vars);
             });
-    println("stoplabel " + i2s(length(b.m)));
     println(iterationState);
     if(notStopped(iterationState.labels, length(b.m))){
         while(b, iterationState);
@@ -68,16 +67,13 @@ notStopped(labels: [int], stoplabel: int) -> bool{
     }
 }
 
-labelExecute(lbl: vLabel, vars: Tree<vVar, vVal>) -> State {
-    println("executing: " + i2s(lbl.id));
+labelExecute(lbl: vLabel, vars: Tree<string, vVal>) -> State {
+    //println("executing: " + i2s(lbl.id));
     switch (lbl.i) {
         vAssign(v, e): {
-            State(lbl.l, setTree(vars, v, expEval(e, vars)));
+            State(lbl.l, setTree(vars, v.n, expEval(e, vars)));
         }
         vIf(c): {
-            println("vif");
-            println(c);
-            println(vars);
             if(expEval(c, vars) != vInt(0)){
                 State(lbl.l, vars);
             } else {
@@ -91,7 +87,7 @@ labelExecute(lbl: vLabel, vars: Tree<vVar, vVal>) -> State {
     }
 }
 
-expEval(e: vExp, vars: Tree<vVar, vVal>) -> vVal{
+expEval(e: vExp, vars: Tree<string, vVal>) -> vVal{
     switch (e) {
         vInt(v): vInt(v);
         vArr(v): vArr(v);
@@ -131,15 +127,16 @@ v2i(val: vVal) -> int{
     }
 }
 
-vLookup(var: vVar, vars: Tree<vVar, vVal>) -> vVal{
-    either(
-        lookupTree(vars, var),
+vLookup(var: vVar, vars: Tree<string, vVal>) -> vVal{
+    switch (lookupTree(vars, var.n)) {
+        Some(v): v;
+        None(): 
         {
             println("Runtime error: variable not found");
             quit(-1);
             vInt(-1);
         }
-    )
+    }
 }
 
 vLength(val: vVal) -> vInt{
@@ -184,8 +181,8 @@ v2s(val: vVal) -> string{
     }
 }
 
-initDeclsTree(h: [vDecl]) -> Tree<vVar, vVal> {
-    fold(h, makeTree(), \acc, decl -> setTree(acc, decl.v, initType(decl.t)));
+initDeclsTree(h: [vDecl]) -> Tree<string, vVal> {
+    fold(h, makeTree(), \acc, decl -> setTree(acc, decl.v.n, initType(decl.t)));
 }
 
 initType(t: vType) -> vVal{
