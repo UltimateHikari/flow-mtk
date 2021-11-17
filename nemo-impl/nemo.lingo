@@ -3,7 +3,7 @@ decl = "VAR" ws var:v ws ":" ws type:t ws ";" ws   { Decl(:v, :t) };
 
 val = int | arr;
 int = digit+$v          { Int(s2i($v)) };
-arr = "[" ws val+:a "]" { Arr(:a) };
+arr = "[" ws val*:a "]" { Arr(:a) };
 entr = val ws;
 
 var = char+$v   { Var($v)      };

@@ -1,0 +1,15 @@
+VAR a : [[INT]];
+VAR b : [INT];
+{(
+    (b := []);
+    (a := []);
+    (PRINT b);
+    (PRINT (LEN b));
+    (a := (SET a 0 b));
+    (PRINT a);
+    (PRINT (LEN a));
+    (a := (SET a 3 (SET b 1 2)));
+    (PRINT a);
+    (PRINT (LEN a));
+    (PRINT (GET a 3))
+)}

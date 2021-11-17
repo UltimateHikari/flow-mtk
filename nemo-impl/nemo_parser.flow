@@ -64,7 +64,7 @@ parse(s: string) -> Maybe<Prog>{
         SemanticActions(t3);
     }
     ret = parsic3(parser, s, specialPegActions, Prog([], nTest(Int(0))) );
-    if(ret.third == "") { Some(ret.first); } else { None() }
+    if(ret.third == "") { Some(ret.first); } else { println(ret.third); None() }
 }
 
 

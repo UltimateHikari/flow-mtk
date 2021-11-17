@@ -36,6 +36,6 @@ testNemoParser(i: int, s: string, verbose: bool) -> void{
 }
 
 main(){
-    tests = ["example", "type", "test", "union", "long"];
+    tests = ["example", "type", "test", "union", "long", "array"];
     mapi(tests, \i, x -> testNemoParser(i, "./test/" + x + ".txt", true));
 }
