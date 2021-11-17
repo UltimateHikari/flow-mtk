@@ -1,0 +1,27 @@
+VAR a : INT;
+VAR b : INT;
+VAR rem : INT;
+{(
+    (a := 234);
+    (b := 16);
+    (
+        WHILE
+        (!b)
+        DO
+        (
+            (rem := a);
+            (
+                WHILE
+                // TODO "rem > b"
+                DO
+                (rem := (rem - b))
+                DONE
+            );
+            (a := b);
+            (b := rem);
+        )
+        DONE
+    );
+    (PRINT a);
+    (PRINT b)
+)}
