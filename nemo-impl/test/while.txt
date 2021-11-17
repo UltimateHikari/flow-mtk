@@ -1,0 +1,13 @@
+VAR a : INT;
+{(
+    (a := 10);
+    (WHILE
+    a
+    DO
+    (
+        (PRINT a);
+        (a := (a - 1))
+    )
+    DONE
+    )
+)}
