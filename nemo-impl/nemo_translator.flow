@@ -51,7 +51,7 @@ add2un(acc: vBody, elem: Body) -> vBody{
     newLen = curLen + vbMax(vElem);
     vBody(concat(
         mapi(
-            vbReplace(acc, curLen, newLen).m,
+            acc.m,
             \ind, e -> 
                 if(ind == 0){
                     vLabel(0,
@@ -59,7 +59,7 @@ add2un(acc: vBody, elem: Body) -> vBody{
                         arrayPush(e.l, curLen)
                     )
                 }else{
-                    e
+                    vbReplaceLabel(e, curLen, newLen);
                 }
             ),
         vbShift(vElem, curLen).m
@@ -96,12 +96,16 @@ vbShift(b: vBody, s: int) -> vBody{
 vbReplace(b: vBody, n: int, m: int) -> vBody{
     vBody(
         map(b.m, \label -> 
-            vLabel(
-                label.id,
-                label.i, 
-                map(label.l, \x -> if(x == n){ m }else{ n })
-            )
+            {vbReplaceLabel(label, n, m);}
         )
+    )
+}
+
+vbReplaceLabel(label: vLabel, n:int, m:int) -> vLabel{
+    vLabel(
+        label.id,
+        label.i, 
+        map(label.l, \x -> if(x == n){ m }else{ n })
     )
 }
 
