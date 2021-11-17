@@ -23,7 +23,7 @@ export{
     vBType : (t: string);
     vArrType : (t: vType);
 
-    vExp ::= vVal, vVar, vSum, vSub, vProd, vDiv, vSet, vGet, vLen;
+    vExp ::= vVal, vVar, vSum, vSub, vProd, vDiv, vSet, vGet, vLen, vNot;
     vSum : (l: vExp, r: vExp);
     vProd : (l: vExp, r: vExp);
     vSub : (l: vExp, r: vExp);
@@ -31,6 +31,7 @@ export{
     vSet : (a: vVar, i: vInt, v: vExp);
     vGet : (a: vVar, i: vInt);
     vLen : (a: vVar);
+    vNot : (e: vExp);
 
     vExecute(p: vProg) -> void;
 }
@@ -49,12 +50,12 @@ while(b: vBody, state: State, testIterLimit:int) -> void{
             newState = labelExecute(b.m[ind], acc.vars);
             State(concat(acc.labels, newState.labels), newState.vars);
             });
-    println(iterationState);
+    //println(iterationState);
     filteredState = State(
         filtermap(iterationState.labels, \l -> if(l==stoplabel){ None() }else{ Some(l) }),
         iterationState.vars
         );
-    if(length(filteredState.labels) > 0 && testIterLimit < 10){
+    if(length(filteredState.labels) > 0 && testIterLimit < 100){
         while(b, filteredState, testIterLimit + 1);
     } else {
         println("vNeMo Executor: done(" + i2s(testIterLimit) + ")"); //workaround
@@ -77,7 +78,7 @@ notStopped(labels: [int], stoplabel: int) -> bool{
 }
 
 labelExecute(lbl: vLabel, vars: Tree<string, vVal>) -> State {
-    println("executing: " + i2s(lbl.id));
+    //println("executing: " + i2s(lbl.id));
     switch (lbl.i) {
         vAssign(v, e): {
             State(lbl.l, setTree(vars, v.n, expEval(e, vars)));
@@ -122,6 +123,15 @@ expEval(e: vExp, vars: Tree<string, vVal>) -> vVal{
             valueGet(vLookup(a, vars), ind.v);
         vLen(a):
             vLength(vLookup(a, vars));
+        vNot(a):
+            {
+                res = expEval(a, vars);
+                if(res == vInt(0)){
+                    vInt(1);
+                }else{
+                    vInt(0);
+                }
+            }
     }
 }
 

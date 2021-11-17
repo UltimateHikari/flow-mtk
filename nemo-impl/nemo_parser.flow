@@ -26,7 +26,7 @@ export{
     nIter: (b: Body);
     nPrint: (e: Exp);
 
-    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen;
+    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen, Not;
     Sum : (l: Exp, r: Exp);
     Prod : (l: Exp, r: Exp);
     Sub : (l: Exp, r: Exp);
@@ -35,6 +35,7 @@ export{
     aSet : (a: Var, i: Int, v: Exp); 
     aGet : (a: Var, i: Int);
     aLen : (a: Var);
+    Not(e: Exp);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now
@@ -51,7 +52,7 @@ buildSeq(xs : [flow]) -> nSeq{
 }
 
 buildWhile(xs: [flow]) -> nSeq{
-    nSeq([nIter(nSeq([nTest(xs[0]), xs[1]])), nTest(Sub(xs[0], Int(1))) ]);
+    nSeq([nIter(nSeq([nTest(xs[0]), xs[1]])), nTest(Not(xs[0])) ]);
 }
 
 parse(s: string) -> Maybe<Prog>{

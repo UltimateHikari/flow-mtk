@@ -123,6 +123,7 @@ e2v(e: Exp) -> vExp{
         aSet(a, i, v): vSet(vVar(a.n), vInt(i.v), e2v(v)); 
         aGet(a, i): vGet(vVar(a.n), vInt(i.v));
         aLen(a): vLen(vVar(a.n));
+        Not(a): vNot(e2v(a));
     }
 }
 
