@@ -43,35 +43,41 @@ vExecute(p: vProg) -> void{
 }
 
 while(b: vBody, state: State) -> void{
-    iterationState = fold(state.labels, state, 
+    iterationState = fold(state.labels, State([], state.vars), 
         \acc, ind -> {
             newState = labelExecute(b.m[ind], acc.vars);
             State(concat(acc.labels, newState.labels), newState.vars);
             });
-    if(isStopped(iterationState.labels, length(b.m))){
+    println("stoplabel " + i2s(length(b.m)));
+    println(iterationState);
+    if(notStopped(iterationState.labels, length(b.m))){
         while(b, iterationState);
     } else {
         println("vNeMo Executor: done"); //workaround
     }
 }
 
-isStopped(labels: [int], stoplabel: int) -> bool{
+notStopped(labels: [int], stoplabel: int) -> bool{
     if(
         length(labels) == 0 || 
         (length(labels) == 1 && labels[0] == stoplabel)
         ){
-            true;
+            false;
     }else{
-        false;
+        true;
     }
 }
 
 labelExecute(lbl: vLabel, vars: Tree<vVar, vVal>) -> State {
+    println("executing: " + i2s(lbl.id));
     switch (lbl.i) {
         vAssign(v, e): {
             State(lbl.l, setTree(vars, v, expEval(e, vars)));
         }
         vIf(c): {
+            println("vif");
+            println(c);
+            println(vars);
             if(expEval(c, vars) != vInt(0)){
                 State(lbl.l, vars);
             } else {

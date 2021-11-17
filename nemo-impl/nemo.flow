@@ -3,7 +3,7 @@ import maybe;
 import nemo_parser;
 import nemo_translator;
 
-testNemoParser(i: int, s: string, verbose: bool) -> Prog{
+testNemoParser(i: int, s: string, verbose: bool) -> void{
     example = getFileContent(s);
     println("TEST" + i2s(i) + ":" + s + ":");
     if(verbose){println(example)};
@@ -11,22 +11,28 @@ testNemoParser(i: int, s: string, verbose: bool) -> Prog{
     p1 = parse(example);
     err = Prog([], nTest(Int(0)));
     p1sure = either(p1, err);
-    println("   result:");
+    println("   parsing:");
     if(p1sure == err){
         println("   Error:Parse");
+        quit(-1);
     } else {
         if(verbose){
             println(p1sure);
         } else {
-            println("   Success:Parse");
+            println("   Success");
         }
     }
-    //translating
+
+    println("   translating:");
     p2 = n2v(p1sure);
-    println(p2);
-    // println("   prog2s(Prog):");
-    // println(prog2s(p1sure));
-    p1sure;
+    if(verbose){
+        println(p2);
+    } else {
+        println("   Success")
+    }
+    println("   running:");
+    vExecute(p2);
+    println("   stopped;");
 }
 
 main(){
