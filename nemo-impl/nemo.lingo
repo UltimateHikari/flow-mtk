@@ -14,7 +14,7 @@ type = primtype | arrtype;
 primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
-body = assign | test | seq | union | iter | print; 
+body = assign | test | seq | union | iter | print | while; 
 assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e)    };
 test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)          };
 seq    = "(" ws sentry+:e body:b ws ")"                      { buildSeq(:e, :b)   };
@@ -23,6 +23,7 @@ union  = "(" ws uentry+:e body:b ws ")"                      { buildUnion(:e, :b
 uentry = body:b ws "U" ws                                    { :b                 };
 iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)          };
 print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)         };
+while  = "(" ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:e, :b) };
 
 exp = var | val | sum | sub | prod | div | set | get | len;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };
