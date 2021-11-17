@@ -39,10 +39,10 @@ State:(labels: [int], vars: Tree<string, vVal>);
 
 vExecute(p: vProg) -> void{
     vars = initDeclsTree(p.h);
-    while(p.b, State([0], vars));
+    while(p.b, State([0], vars), 0);
 }
 
-while(b: vBody, state: State) -> void{
+while(b: vBody, state: State, testIterLimit:int) -> void{
     stoplabel = length(b.m);
     iterationState = fold(state.labels, State([], state.vars), 
         \acc, ind -> {
@@ -54,10 +54,10 @@ while(b: vBody, state: State) -> void{
         filtermap(iterationState.labels, \l -> if(l==stoplabel){ None() }else{ Some(l) }),
         iterationState.vars
         );
-    if(length(filteredState.labels) > 0){
-        while(b, filteredState);
+    if(length(filteredState.labels) > 0 && testIterLimit < 10){
+        while(b, filteredState, testIterLimit + 1);
     } else {
-        println("vNeMo Executor: done"); //workaround
+        println("vNeMo Executor: done(" + i2s(testIterLimit) + ")"); //workaround
     }
 }
 
