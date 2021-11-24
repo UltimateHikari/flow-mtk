@@ -18,7 +18,7 @@ export{
     bType : (t: string);
     arrType : (t: Type);
 
-    Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint;
+    Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint, Annotation;
     nAssign: (v: Var, e: Exp);
     nTest:  (e: Exp);
     nSeq: (b: [Body]);
@@ -37,6 +37,15 @@ export{
     aLen : (a: Var);
     Not(e: Exp);
     Less : (l: Exp, r: Exp);
+
+    Annotation : (f: Formula);
+    Formula ::= Forall, Exists, Or, And, Impl, Neg;
+    Forall : (x: Var, e: Exp);
+    Exists : (x: Var, e: Exp);
+    Or : (l: Exp, r: Exp);
+    And : (l: Exp, r: Exp);
+    Impl : (l: Exp, r: Exp);
+    Neg : (e:Exp);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now

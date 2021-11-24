@@ -38,6 +38,17 @@ less   = "(" ws exp:l ws "<" ws exp:r ws ")"            { Less(:l, :r)     };
 more   = "(" ws exp:l ws ">" ws exp:r ws ")"            { Less(:r, :l)     };
 eless   = "(" ws exp:l ws "<=" ws exp:r ws ")"          { Not(Less(:r, :l))};
 emore   = "(" ws exp:l ws ">=" ws exp:r ws ")"          { Not(Less(:l, :r))};
+eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { Prod(Not(Less(:r, :l)), Not(Less(:l, :r)))};
+
+annotation = "@" ws formula:f ws ";"                    { Annotation(:f)          };
+formula = forall | exists | or | and | impl | neg;
+forall  = "(" ws "A" ws var:x ws exp:e ws ")"           { Forall(:x, :e)};
+exists  = "(" ws "E" ws var:x ws exp:e ws ")"           { Exists(:x, :e)};
+or      = "(" ws exp:l ws "|" ws exp:r ws ")"           { Or(:l, :r)    };
+and     = "(" ws exp:l ws "&" ws exp:r ws ")"           { And(:l, :r)   };
+impl    = "(" ws exp:l ws "->" ws exp:r ws ")"          { Impl(:l, :r)  };
+neg     = "(" ws "NOT" ws exp:e ws ")"                  { Neg(:e)       };
+
 
 ws = s*;
 s = " " | "\t" | "\n";
