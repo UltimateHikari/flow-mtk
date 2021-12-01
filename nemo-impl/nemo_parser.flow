@@ -18,12 +18,13 @@ export{
     bType : (t: string);
     arrType : (t: Type);
 
-    Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint, Annotation;
+    Body ::= nAssign, nTest, nSeq, nUnion, nIter, aIter, nPrint;
     nAssign: (v: Var, e: Exp);
     nTest:  (e: Exp);
     nSeq: (b: [Body]);
     nUnion: (b: [Body]);
     nIter: (b: Body);
+    aIter: (a: Annotation, i: nIter);
     nPrint: (e: Exp);
 
     Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen, Not, Less;
@@ -65,13 +66,18 @@ buildWhile(xs: [flow]) -> nSeq{
     nSeq([nIter(nSeq([nTest(xs[0]), xs[1]])), nTest(Not(xs[0])) ]);
 }
 
+buildaWhile(xs: [flow]) -> nSeq{
+    nSeq([aIter(xs[1], nIter(nSeq([nTest(xs[1]), xs[2]]))), nTest(Not(xs[1])) ]);
+}
+
 parse(s: string) -> Maybe<Prog>{
     parser = compilePegGrammar(grammar);
     specialPegActions = {
         t = setTree(defaultPegActions.t, "buildUnion", buildUnion);
         t2 = setTree(t, "buildSeq", buildSeq);
         t3 = setTree(t2, "buildWhile", buildWhile);
-        SemanticActions(t3);
+        t4 = setTree(t3, "buildaWhile", buildaWhile);
+        SemanticActions(t4);
     }
     ret = parsic3(parser, s, specialPegActions, Prog([], nTest(Int(0))) );
     if(ret.third == "") { Some(ret.first); } else { println(ret.third); None() }

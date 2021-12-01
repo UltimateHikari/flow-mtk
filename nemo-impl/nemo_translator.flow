@@ -36,8 +36,8 @@ b2v(body: Body) -> Maybe<vBody>{
         nSeq(b): Some( fold(b, vBody([]), add2seq) );
         nUnion(b): Some( fold(b, vBody([vLabel(0, vIf(vInt(1)), [])]), add2un) );
         nIter(b): Some( ib2v(b) );
+        aIter(a, i): Some(b2v(i));
         nPrint(e): Some( vBody([vLabel(0, vPrint(e2v(e)), [1])]) );
-        Annotation(f): None();
     }
 }
 

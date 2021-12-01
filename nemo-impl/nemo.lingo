@@ -14,7 +14,7 @@ type = primtype | arrtype;
 primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
-body = assign | test | seq | union | iter | print | while; 
+body = assign | test | seq | union | iter | aiter | print | while | awhile; 
 assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e)    };
 test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)          };
 seq    = "(" ws sentry+:e body:b ws ")"                      { buildSeq(:e, :b)   };
@@ -22,8 +22,19 @@ sentry = body:b ws ";" ws                                    { :b               
 union  = "(" ws uentry+:e body:b ws ")"                      { buildUnion(:e, :b) };
 uentry = body:b ws "U" ws                                    { :b                 };
 iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)          };
+aiter   = "(" ws annotation:a ws body:b ws "*" ws ")"        { nIter(:a, :b)      };
 print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)         };
 while  = "(" ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:e, :b) };
+awhile  = "(" ws annotation:a ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildaWhile(:a, :e, :b) };
+
+annotation = "@" ws formula:f ws ";"                    { Annotation(:f)          };
+formula = forall | exists | or | and | impl | neg | exp;
+forall  = "(" ws "A" ws var:x ws exp:e ws ")"           { Forall(:x, :e)};
+exists  = "(" ws "E" ws var:x ws exp:e ws ")"           { Exists(:x, :e)};
+or      = "(" ws exp:l ws "|" ws exp:r ws ")"           { Or(:l, :r)    };
+and     = "(" ws exp:l ws "&" ws exp:r ws ")"           { And(:l, :r)   };
+impl    = "(" ws exp:l ws "->" ws exp:r ws ")"          { Impl(:l, :r)  };
+neg     = "(" ws "NOT" ws exp:e ws ")"                  { Neg(:e)       };
 
 exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };
@@ -39,16 +50,6 @@ more   = "(" ws exp:l ws ">" ws exp:r ws ")"            { Less(:r, :l)     };
 eless   = "(" ws exp:l ws "<=" ws exp:r ws ")"          { Not(Less(:r, :l))};
 emore   = "(" ws exp:l ws ">=" ws exp:r ws ")"          { Not(Less(:l, :r))};
 eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { Prod(Not(Less(:r, :l)), Not(Less(:l, :r)))};
-
-annotation = "@" ws formula:f ws ";"                    { Annotation(:f)          };
-formula = forall | exists | or | and | impl | neg;
-forall  = "(" ws "A" ws var:x ws exp:e ws ")"           { Forall(:x, :e)};
-exists  = "(" ws "E" ws var:x ws exp:e ws ")"           { Exists(:x, :e)};
-or      = "(" ws exp:l ws "|" ws exp:r ws ")"           { Or(:l, :r)    };
-and     = "(" ws exp:l ws "&" ws exp:r ws ")"           { And(:l, :r)   };
-impl    = "(" ws exp:l ws "->" ws exp:r ws ")"          { Impl(:l, :r)  };
-neg     = "(" ws "NOT" ws exp:e ws ")"                  { Neg(:e)       };
-
 
 ws = s*;
 s = " " | "\t" | "\n";
