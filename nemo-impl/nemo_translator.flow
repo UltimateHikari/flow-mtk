@@ -5,9 +5,10 @@ import nemo_vnemo;
 
 export{
     n2v(p: Prog) -> vProg;
+    n2f(p: Prog, f:Formula) -> Maybe<Formula>;
 }
 
-n2v(p: Prog){
+n2v(p: Prog) -> vProg{
     vProg(
         h2v(p.h),
         b2ve(p.b)
@@ -140,4 +141,29 @@ v2vv(val: Val) -> vVal{
         Int(v): vInt(v);
         Arr(v): vArr(map(v, v2vv));
     }
+}
+
+n2f(p: Prog, f:Formula) -> Maybe<Formula>{
+    b2f(p.b, f)
+}
+
+b2f(body: Body, f: Formula) -> Maybe<Formula>{
+    switch (body) {
+        nAssign(v, e): Some(Repl(f, v, e));
+        nTest(e): Some(Impl(e, f));
+        nSeq(b): foldr(b, Some(Int(1)), foldseq);
+        nUnion(b): fold(b, Some(Int(1)), \a, bb -> foldun(a, bb, f));
+        nIter(b): None(); // everyone should be annotated
+        aIter(a, i): Some(a.f);
+        nPrint(e): Some(And(Int(1), Int(1))); // always true
+    }
+}
+
+foldseq(acc: Maybe<Formula>, body: Body) -> Maybe<Formula>{
+    maybeBind(acc, \f -> b2f(body, f))
+}
+
+foldun(acc: Maybe<Formula>, body: Body, phi: Formula) -> Maybe<Formula>{
+    maybeBind2(\m1, m2 -> Some(And(m1, m2)))(acc, b2f(body, phi))
+    //maybeBind(acc, \f -> Some(And(b2f(body, phi), f)))
 }
