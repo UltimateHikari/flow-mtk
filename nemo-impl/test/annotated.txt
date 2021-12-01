@@ -6,13 +6,12 @@ VAR rem : INT;
     (b := 16);
     (rem := a);
     (
-        @(1 | 0)
+        @(a >= 234)
         WHILE
         (rem >= b)
         DO
         (rem := (rem - b))
         DONE
     );
-    (PRINT a);
-    (PRINT b)
+    (PRINT rem)
 )}

@@ -27,14 +27,14 @@ print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)       
 while  = "(" ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:e, :b) };
 awhile  = "(" ws annotation:a ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildaWhile(:a, :e, :b) };
 
-annotation = "@" ws formula:f ws ";"                    { Annotation(:f)          };
+annotation = "@" ws formula:f                    { Annotation(:f)          };
 formula = forall | exists | or | and | impl | neg | exp;
-forall  = "(" ws "A" ws var:x ws exp:e ws ")"           { Forall(:x, :e)};
-exists  = "(" ws "E" ws var:x ws exp:e ws ")"           { Exists(:x, :e)};
-or      = "(" ws exp:l ws "|" ws exp:r ws ")"           { Or(:l, :r)    };
-and     = "(" ws exp:l ws "&" ws exp:r ws ")"           { And(:l, :r)   };
-impl    = "(" ws exp:l ws "->" ws exp:r ws ")"          { Impl(:l, :r)  };
-neg     = "(" ws "NOT" ws exp:e ws ")"                  { Neg(:e)       };
+forall  = "(" ws "A" ws var:x ws formula:e ws ")"           { Forall(:x, :e)};
+exists  = "(" ws "E" ws var:x ws formula:e ws ")"           { Exists(:x, :e)};
+or      = "(" ws formula:l ws "|" ws formula:r ws ")"           { Or(:l, :r)    };
+and     = "(" ws formula:l ws "&" ws formula:r ws ")"           { And(:l, :r)   };
+impl    = "(" ws formula:l ws "->" ws formula:r ws ")"          { Impl(:l, :r)  };
+neg     = "(" ws "NOT" ws formula:e ws ")"                  { Neg(:e)       };
 
 exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };
@@ -49,7 +49,7 @@ less   = "(" ws exp:l ws "<" ws exp:r ws ")"            { Less(:l, :r)     };
 more   = "(" ws exp:l ws ">" ws exp:r ws ")"            { Less(:r, :l)     };
 eless   = "(" ws exp:l ws "<=" ws exp:r ws ")"          { Not(Less(:r, :l))};
 emore   = "(" ws exp:l ws ">=" ws exp:r ws ")"          { Not(Less(:l, :r))};
-eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { Prod(Not(Less(:r, :l)), Not(Less(:l, :r)))};
+eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { Prod(Not(Less(:r, :l)), Not(Less(:l, :r))) };
 
 ws = s*;
 s = " " | "\t" | "\n";

@@ -36,6 +36,7 @@ testNemoParser(i: int, s: string, verbose: bool) -> void{
 }
 
 main(){
+    //TODO fix == in annotated
     tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "annotated", "annotated_gcd"];
     mapi(tests, \i, x -> testNemoParser(i, "./test/" + x + ".txt", true));
 }

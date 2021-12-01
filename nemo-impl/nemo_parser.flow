@@ -41,12 +41,12 @@ export{
 
     Annotation : (f: Formula);
     Formula ::= Forall, Exists, Or, And, Impl, Neg;
-    Forall : (x: Var, e: Exp);
-    Exists : (x: Var, e: Exp);
-    Or : (l: Exp, r: Exp);
-    And : (l: Exp, r: Exp);
-    Impl : (l: Exp, r: Exp);
-    Neg : (e:Exp);
+    Forall : (x: Var, e: Formula);
+    Exists : (x: Var, e: Formula);
+    Or : (l: Formula, r: Formula);
+    And : (l: Formula, r: Formula);
+    Impl : (l: Formula, r: Formula);
+    Neg : (e:Formula);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now
@@ -67,7 +67,7 @@ buildWhile(xs: [flow]) -> nSeq{
 }
 
 buildaWhile(xs: [flow]) -> nSeq{
-    nSeq([aIter(xs[1], nIter(nSeq([nTest(xs[1]), xs[2]]))), nTest(Not(xs[1])) ]);
+    nSeq([aIter(xs[0], nIter(nSeq([nTest(xs[1]), xs[2]]))), nTest(Not(xs[1])) ]);
 }
 
 parse(s: string) -> Maybe<Prog>{
