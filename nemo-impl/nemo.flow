@@ -3,15 +3,18 @@ import maybe;
 import nemo_parser;
 import nemo_translator;
 
-testNemoParser(i: int, s: string, verbose: bool) -> void{
+testGet(i: int, s: string, verbose: bool) -> string {
     example = getFileContent(s);
     println("TEST" + i2s(i) + ":" + s + ":");
     if(verbose){println(example)};
-    // parsing
-    p1 = parse(example);
+    example
+}
+
+testParse(rt: string, verbose: bool) -> Prog{
+    p1 = parse(rt);
     err = Prog([], nTest(Int(0)));
     p1sure = either(p1, err);
-    println("   parsing:");
+    println("   PARSING:");
     if(p1sure == err){
         println("   Error:Parse");
         quit(-1);
@@ -22,21 +25,51 @@ testNemoParser(i: int, s: string, verbose: bool) -> void{
             println("   Success");
         }
     }
+    p1sure
+}
 
-    println("   translating:");
-    p2 = n2v(p1sure);
+testTranslate(p: Prog, verbose: bool) -> vProg{
+    println("   TRANSLATING:");
+    p2 = n2v(p);
     if(verbose){
         println(p2);
     } else {
         println("   Success")
     }
-    println("   running:");
-    vExecute(p2);
-    println("   stopped;");
+    p2
+}
+
+testExecute(v: vProg, verbose: bool) {
+    println("   RUNNING:");
+    vExecute(v);
+}
+
+testVerify(p: Prog, verbose: bool) {
+    println("   VERIFYING(allowed to fail with nIters):");
+    ferr = Int(0);
+    fsure = either(n2f(p, Less(Int(0), Int(1))), ferr);
+    if(fsure == ferr){
+        println("   Error: parse annotation");
+    }else{
+        if(verbose){
+            println(fsure);
+        } else {
+            println("   Success");
+        }
+    }
+}
+
+testNemo(i: int, s: string, verbose: bool) -> void{
+    rawtext = testGet(i, s, verbose);
+    parsedProg = testParse(rawtext, verbose);
+    virtualProg = testTranslate(parsedProg, verbose);
+    testExecute(virtualProg, verbose);
+    testVerify(parsedProg, verbose);
+    println("\n\n");
 }
 
 main(){
     //TODO fix == in annotated
     tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "annotated", "annotated_gcd"];
-    mapi(tests, \i, x -> testNemoParser(i, "./test/" + x + ".txt", true));
+    mapi(tests, \i, x -> testNemo(i, "./test/" + x + ".txt", true));
 }

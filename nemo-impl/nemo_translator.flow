@@ -12,7 +12,6 @@ n2v(p: Prog) -> vProg{
     vProg(
         h2v(p.h),
         b2ve(p.b)
-
     )
 }
 
