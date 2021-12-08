@@ -5,7 +5,8 @@ import nemo_vnemo;
 
 export{
     n2v(p: Prog) -> vProg;
-    n2f(p: Prog, f:Formula) -> Maybe<Formula>;
+    n2ac(p: Prog, f:Formula) -> Maybe<Formula>;
+    n2vc(p: Prog, f:Formula) -> Maybe<Formula>;
 }
 
 n2v(p: Prog) -> vProg{
@@ -142,27 +143,50 @@ v2vv(val: Val) -> vVal{
     }
 }
 
-n2f(p: Prog, f:Formula) -> Maybe<Formula>{
-    b2f(p.b, f)
+n2ac(p: Prog, f:Formula) -> Maybe<Formula>{
+    b2ac(p.b, f)
 }
 
-b2f(body: Body, f: Formula) -> Maybe<Formula>{
+n2vc(p: Prog, f:Formula) -> Maybe<Formula>{
+    b2vc(p.b, f)
+}
+
+b2ac(body: Body, f: Formula) -> Maybe<Formula>{
     switch (body) {
         nAssign(v, e): Some(Repl(f, v, e));
         nTest(e): Some(Impl(e, f));
-        nSeq(b): foldr(b, Some(Int(1)), foldseq);
-        nUnion(b): fold(b, Some(Int(1)), \a, bb -> foldun(a, bb, f));
+        nSeq(b): foldr(b, Some(Int(1)), acfoldseq);
+        nUnion(b): fold(b, Some(Int(1)), \a, bb -> acfoldun(a, bb, f));
         nIter(b): None(); // everyone should be annotated
         aIter(a, i): Some(a.f);
         nPrint(e): Some(And(Int(1), Int(1))); // always true
     }
 }
 
-foldseq(acc: Maybe<Formula>, body: Body) -> Maybe<Formula>{
-    maybeBind(acc, \f -> b2f(body, f))
+b2vc(body: Body, f: Formula) -> Maybe<Formula>{
+    switch (body) {
+        nAssign(v, e): Some(Nop());
+        nTest(e): Some(Nop());
+        nSeq(b): foldr(b, Some(Int(1)), vcfoldseq);
+        nUnion(b): fold(b, Some(Int(1)), \a, bb -> vcfoldun(a, bb, f));
+        nIter(b): None(); // everyone should be annotated
+        aIter(a, i): Some(And(Impl(a.f, f), Impl(a.f, f))); // second f is b2ac(i.b, a.f)
+        nPrint(e): Some(Nop());
+    }
 }
 
-foldun(acc: Maybe<Formula>, body: Body, phi: Formula) -> Maybe<Formula>{
-    maybeBind2(\m1, m2 -> Some(And(m1, m2)))(acc, b2f(body, phi))
-    //maybeBind(acc, \f -> Some(And(b2f(body, phi), f)))
+acfoldseq(acc: Maybe<Formula>, body: Body) -> Maybe<Formula>{
+    maybeBind(acc, \f -> b2ac(body, f))
+}
+
+acfoldun(acc: Maybe<Formula>, body: Body, phi: Formula) -> Maybe<Formula>{
+    maybeBind2(\m1, m2 -> Some(And(m1, m2)))(acc, b2ac(body, phi))
+}
+
+vcfoldseq(acc: Maybe<Formula>, body: Body) -> Maybe<Formula>{
+    maybeBind(acc, \f -> b2vc(body, f))
+}
+
+vcfoldun(acc: Maybe<Formula>, body: Body, phi: Formula) -> Maybe<Formula>{
+    maybeBind2(\m1, m2 -> Some(And(m1, m2)))(acc, b2vc(body, phi))
 }

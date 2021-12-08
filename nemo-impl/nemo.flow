@@ -47,7 +47,7 @@ testExecute(v: vProg, verbose: bool) {
 testVerify(p: Prog, verbose: bool) {
     println("   VERIFYING(allowed to fail with nIters):");
     ferr = Int(0);
-    fsure = either(n2f(p, Less(Int(0), Int(1))), ferr);
+    fsure = either(n2ac(p, Less(Int(0), Int(1))), ferr);
     if(fsure == ferr){
         println("   Error: parse annotation");
     }else{
@@ -59,7 +59,7 @@ testVerify(p: Prog, verbose: bool) {
     }
 }
 
-testNemo(i: int, s: string, verbose: bool) -> void{
+testNemo(i: int, s: string, verbose: bool) -> void {
     rawtext = testGet(i, s, verbose);
     parsedProg = testParse(rawtext, verbose);
     virtualProg = testTranslate(parsedProg, verbose);

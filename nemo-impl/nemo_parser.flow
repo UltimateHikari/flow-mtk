@@ -40,7 +40,7 @@ export{
     Less : (l: Exp, r: Exp);
 
     Annotation : (f: Formula);
-    Formula ::= Forall, Exists, Or, And, Impl, Neg, Repl, Exp;
+    Formula ::= Forall, Exists, Or, And, Impl, Neg, Repl, Exp, Nop;
     Forall : (x: Var, e: Formula);
     Exists : (x: Var, e: Formula);
     Or : (l: Formula, r: Formula);
@@ -48,6 +48,7 @@ export{
     Impl : (l: Formula, r: Formula);
     Neg : (e:Formula);
     Repl : (e: Formula, x: Var, t: Exp);
+    Nop : ();
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now
