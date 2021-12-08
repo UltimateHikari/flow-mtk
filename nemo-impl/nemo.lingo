@@ -1,4 +1,4 @@
-prog = ws decl+:d "{" ws body:b ws "}" ws { Prog(:d, :b) };
+prog = ws decl+:d annt:bc ws"{" ws body:b ws "}" ws annt:ac { Prog(:d, :b, :bc, :ac) };
 decl = "VAR" ws var:v ws ":" ws type:t ws ";" ws   { Decl(:v, :t) };
 
 val = int | arr;
@@ -14,28 +14,27 @@ type = primtype | arrtype;
 primtype = "INT"                { bType("int") };
 arrtype  = "[" ws type:t ws "]" { arrType(:t)  };
 
-body = assign | test | seq | union | iter | aiter | print | while | awhile; 
+body = assign | test | seq | union | iter | print | while; 
 assign = "(" ws var:v ws ":=" ws exp:e ws ")"                { nAssign(:v, :e)    };
 test   = "(" ws exp:e ws "?"  ws ")"                         { nTest(:e)          };
 seq    = "(" ws sentry+:e body:b ws ")"                      { buildSeq(:e, :b)   };
 sentry = body:b ws ";" ws                                    { :b                 };
 union  = "(" ws uentry+:e body:b ws ")"                      { buildUnion(:e, :b) };
 uentry = body:b ws "U" ws                                    { :b                 };
-iter   = "(" ws body:a ws "*" ws ")"                         { nIter(:a)          };
-aiter   = "(" ws annotation:a ws body:b ws "*" ws ")"        { nIter(:a, :b)      };
+iter  = "(" ws annt:a ws body:b ws "*" ws ")"               { nIter(:a, :b)      };
 print  = "(" ws "PRINT" ws exp:e ws ")"                      { nPrint(:e)         };
-while  = "(" ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:e, :b) };
-awhile  = "(" ws annotation:a ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildaWhile(:a, :e, :b) };
+while  = "(" ws annt:a ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:a, :e, :b) };
 
-annotation = "@" ws formula:f                    { Annotation(:f)          };
-formula = forall | exists | or | and | impl | neg | exp | repl;
-forall  = "(" ws "A" ws var:x ws formula:e ws ")"           { Forall(:x, :e)};
-exists  = "(" ws "E" ws var:x ws formula:e ws ")"           { Exists(:x, :e)};
-or      = "(" ws formula:l ws "|" ws formula:r ws ")"       { Or(:l, :r)    };
-and     = "(" ws formula:l ws "&" ws formula:r ws ")"       { And(:l, :r)   };
-impl    = "(" ws formula:l ws "->" ws formula:r ws ")"      { Impl(:l, :r)  };
-neg     = "(" ws "NOT" ws formula:e ws ")"                  { Neg(:e)       };
+annt = "@" ws formula:f                                           { annt(:f)        };
+formula = forall | exists | or | and | impl | neg | exp | repl | nop;
+forall  = "(" ws "A" ws var:x ws formula:e ws ")"                 { Forall(:x, :e)  };
+exists  = "(" ws "E" ws var:x ws formula:e ws ")"                 { Exists(:x, :e)  };
+or      = "(" ws formula:l ws "|" ws formula:r ws ")"             { Or(:l, :r)      };
+and     = "(" ws formula:l ws "&" ws formula:r ws ")"             { And(:l, :r)     };
+impl    = "(" ws formula:l ws "->" ws formula:r ws ")"            { Impl(:l, :r)    };
+neg     = "(" ws "NOT" ws formula:e ws ")"                        { Neg(:e)         };
 repl    = "(" ws formula:f ws "R" ws var:x ws "W" ws exp:e ws ")" { Repl(:f, :x, :e)};
+nop     = "(" ws "NOP" ws ")"                                     { Nop()           };
 
 exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };

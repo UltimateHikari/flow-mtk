@@ -2,6 +2,7 @@ import runtime;
 import maybe;
 import nemo_parser;
 import nemo_translator;
+import nemo_verifier;
 
 testGet(i: int, s: string, verbose: bool) -> string {
     example = getFileContent(s);
@@ -12,10 +13,9 @@ testGet(i: int, s: string, verbose: bool) -> string {
 
 testParse(rt: string, verbose: bool) -> Prog{
     p1 = parse(rt);
-    err = Prog([], nTest(Int(0)));
-    p1sure = either(p1, err);
+    p1sure = either(p1, ErrorProg);
     println("   PARSING:");
-    if(p1sure == err){
+    if(p1sure == ErrorProg){
         println("   Error:Parse");
         quit(-1);
     } else {
