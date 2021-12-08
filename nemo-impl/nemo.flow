@@ -45,17 +45,12 @@ testExecute(v: vProg, verbose: bool) {
 }
 
 testVerify(p: Prog, verbose: bool) {
-    println("   VERIFYING(allowed to fail with nIters):");
-    ferr = Int(0);
-    fsure = either(n2ac(p, Less(Int(0), Int(1))), ferr);
-    if(fsure == ferr){
-        println("   Error: parse annotation");
-    }else{
-        if(verbose){
-            println(fsure);
-        } else {
-            println("   Success");
-        }
+    println("   VERIFYING:");
+    f1 = n2c(p);
+    if(verbose){
+        println(f1);
+    } else {
+        println("   Success");
     }
 }
 
