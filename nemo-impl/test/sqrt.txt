@@ -2,7 +2,7 @@ VAR x : INT;
 VAR y : INT;
 VAR n : INT;
 @(n >= 0)
-{
+{(
     (n := 100);
     (x := 0);
     (y := 0);
@@ -19,5 +19,5 @@ VAR n : INT;
     );
     (x := (x - 1));
     (PRINT x)
-}
+)}
 @( (x <= n) & ((x+1) > n) )

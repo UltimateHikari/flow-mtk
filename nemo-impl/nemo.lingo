@@ -36,7 +36,7 @@ neg     = "(" ws "NOT" ws formula:e ws ")"                        { Neg(:e)     
 repl    = "(" ws formula:f ws "R" ws var:x ws "W" ws exp:e ws ")" { Repl(:f, :x, :e)};
 nop     = "(" ws "NOP" ws ")"                                     { Nop()           };
 
-exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore;
+exp = var | val | sum | sub | prod | div | set | get | len | not | less | more | eless | emore | eq;
 sum    = "(" ws exp:l ws "+" ws exp:r ws ")"            { Sum(:l, :r)      };
 sub    = "(" ws exp:l ws "-" ws exp:r ws ")"            { Sub(:l, :r)      };
 prod   = "(" ws exp:l ws "*" ws exp:r ws ")"            { Prod(:l, :r)     };

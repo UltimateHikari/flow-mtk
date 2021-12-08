@@ -2,13 +2,13 @@ VAR x : INT;
 VAR y : INT;
 VAR z : INT;
 @((x == 10) & (y == 20))
-{
+{(
     (x := 10);
     (y := 20);
     (z := (x + y));
     (x := (z - x));
     (y := (z - x));
     (PRINT x);
-    (PRINT y);
-}
+    (PRINT y)
+)}
 @((x == 20) & (y == 10))
