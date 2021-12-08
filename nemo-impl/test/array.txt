@@ -1,5 +1,6 @@
 VAR a : [[INT]];
 VAR b : [INT];
+@(NOP)
 {(
     (b := []);
     (a := []);
@@ -13,3 +14,4 @@ VAR b : [INT];
     (PRINT (LEN a));
     (PRINT (GET a 3))
 )}
+@(NOP)

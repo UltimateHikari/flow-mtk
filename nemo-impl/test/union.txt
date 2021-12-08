@@ -1,5 +1,6 @@
 VAR a : INT;
 VAR b : INT;
+@(NOP)
 {(
     (a:=3);
     (b:=(a+1));
@@ -7,3 +8,4 @@ VAR b : INT;
     (PRINT a) U (PRINT (a - b)) U (PRINT (a+b)) U (PRINT(a*b)) 
     )
 )}
+@(NOP)

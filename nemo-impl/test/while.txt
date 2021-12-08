@@ -1,13 +1,17 @@
 VAR a : INT;
+@(NOP)
 {(
     (a := 10);
-    (WHILE
-    a
-    DO
     (
-        (PRINT a);
-        (a := (a - 1))
-    )
-    DONE
+        @(NOP)
+        WHILE
+        a
+        DO
+        (
+            (PRINT a);
+            (a := (a - 1))
+        )
+        DONE
     )
 )}
+@(NOP)

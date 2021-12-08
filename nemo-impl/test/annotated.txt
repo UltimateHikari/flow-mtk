@@ -1,6 +1,7 @@
 VAR a : INT;
 VAR b : INT;
 VAR rem : INT;
+@(NOP)
 {(
     (a := 234);
     (b := 16);
@@ -15,3 +16,4 @@ VAR rem : INT;
     );
     (PRINT rem)
 )}
+@(NOP)

@@ -1,4 +1,5 @@
 VAR a : INT;
+@(NOP)
 {(
   (a:=1);
   (a?);
@@ -7,3 +8,4 @@ VAR a : INT;
   (a?);
   (PRINT a) 
 )}
+@(NOP)

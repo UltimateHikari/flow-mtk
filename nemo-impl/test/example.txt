@@ -1,3 +1,5 @@
 VAR a : INT; 
 VAR b : INT ; 
+@(NOP)
 { (a := 10) }
+@(NOP)

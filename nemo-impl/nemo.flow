@@ -70,6 +70,6 @@ testNemo(i: int, s: string, verbose: bool) -> void {
 
 main(){
     //TODO fix == in annotated
-    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "annotated", "annotated_gcd"];
+    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd"];
     mapi(tests, \i, x -> testNemo(i, "./test/" + x + ".txt", true));
 }
