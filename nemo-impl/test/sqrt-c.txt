@@ -1,0 +1,22 @@
+VAR x : INT;
+VAR y : INT;
+VAR n : INT;
+@(n >= 0)
+{(
+    (x := 0);
+    (y := 0);
+    (
+        @(NOP)
+        WHILE
+        (y < n)
+        DO
+        (
+            (y := ((y + (2*x)) + 1));
+            (x := (x + 1))
+        )
+        DONE
+    );
+    (x := (x - 1));
+    (PRINT x)
+)}
+@( (x <= n) & ((x+1) > n) )

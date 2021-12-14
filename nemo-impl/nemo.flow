@@ -49,21 +49,29 @@ testVerify(p: Prog, verbose: bool) {
     f1 = n2c(p);
     if(verbose){
         println(f1);
+        println(c2s(f1));
     } else {
         println("   Success");
     }
 }
 
-testNemo(i: int, s: string, verbose: bool) -> void {
+testNemo(i: int, s: string, verbose: bool, skipExecute: bool) -> void {
     rawtext = testGet(i, s, verbose);
     parsedProg = testParse(rawtext, verbose);
     virtualProg = testTranslate(parsedProg, verbose);
-    testExecute(virtualProg, verbose);
+    if(!skipExecute){
+        testExecute(virtualProg, verbose);
+    }
     testVerify(parsedProg, verbose);
     println("\n\n");
 }
 
 main(){
-    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "swap", "sqrt"];
-    mapi(tests, \i, x -> testNemo(i, "./test/" + x + ".txt", true));
+    // suffix -c stands for programs with removed parameters
+    // use with skipExecute = true for producing verification formula
+    // then insert with not() in z3 and check sat
+    verbose = true;
+    skipExecute = true;
+    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "swap", "sqrt", "sqrt-c"];
+    mapi(tests, \i, x -> testNemo(i, "./test/" + x + ".txt", verbose, skipExecute));
 }
