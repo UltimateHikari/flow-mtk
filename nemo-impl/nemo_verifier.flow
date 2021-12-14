@@ -13,6 +13,7 @@ n2c(p: Prog) -> Formula {
     // body & aftercondition
     ac = b2ac(p.b, p.ac.f);
     vc = b2vc(p.b, p.ac.f);
+    //lazy way of aestetic fold artifacts removal
     denop(denop(denop(denop(
         And(p.bc.f, And(p.ac.f, And(ac, vc)))
     ))));
@@ -62,7 +63,7 @@ c2s(f: Formula) -> string {
         And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
         Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
         Neg(e):        strGlue(["( not", c2s(e), ")"],             " ");
-        Repl(e, x, t): c2s(e); // TODO replace
+        Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
         Int(v):        i2s(v);
         Arr(a):        "[err]"// TODO array expression
         Var(n):        n;
@@ -88,44 +89,17 @@ denop(f: Formula) -> Formula{
 }
 
 anddenop(l:Formula, r:Formula) -> Formula{
-    //println("");
-    //println(l);
-    //println(r);
     if(l == Nop()){
         if(r == Nop()){
-            //println("1");
             Nop()
         }else{
-            //println("2");
             denop(r)
         }
     } else {
         if(r == Nop()){
-            //println("3");
             denop(l)
         } else {
-            //println("4");
             And(denop(l), denop(r))
-        }
-    }
-}
-
-and2s(l:Formula, r:Formula) -> string{
-    //println(l);
-    //println(r);
-    if(l == Nop()){
-                //println("hey");
-        if(r == Nop()){
-            "(= 2 2)"
-        }else{
-            c2s(r)
-        }
-    } else {
-        if(r == Nop()){
-            //println("yeh");
-            c2s(l)
-        } else {
-            strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
         }
     }
 }
