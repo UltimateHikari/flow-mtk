@@ -5,18 +5,43 @@ import nemo_vnemo;
 
 export{
     // conjunction of ac and all vc
-    n2c(p: Prog) -> Formula;
+    n2c(p: Prog) -> string;
     c2s(f: Formula) -> string;
 }
 
-n2c(p: Prog) -> Formula {
+n2c(p: Prog) -> string {
+    res = fold(p.h, "", folddecl);
     // body & aftercondition
-    ac = b2ac(p.b, p.ac.f);
-    vc = b2vc(p.b, p.ac.f);
-    //lazy way of aestetic fold artifacts removal
-    denop(denop(denop(denop(
-        And(p.bc.f, And(p.ac.f, And(ac, vc)))
-    ))));
+    ac = denop(denop(denop(
+        Impl(p.bc.f, b2ac(p.b, p.ac.f))
+    )));
+    vc = denop(denop(denop(
+        b2vc(p.b, p.ac.f)
+    )));
+    // //lazy way of aestetic fold artifacts removal
+    // denop(denop(denop(denop(
+    //     And(p.bc.f, And(p.ac.f, And(ac, vc)))
+    // ))));
+    res + f2smt(ac) + f2smt(vc)
+}
+
+folddecl(acc: string, d: Decl) -> string{
+    acc + "(declare-const " + d.v.n + " " + t2s(d.t) + ")\n"
+}
+
+f2smt(f: Formula) -> string{
+    "(push)\n(assert (not  " + c2s(f) + "  ))\n(check-sat)\n(get-model)\n(pop)\n" 
+}
+
+smtend() -> string{
+    "(check-sat)\n(get-model)"
+}
+
+t2s(t: Type) -> string{
+    switch(t){
+        bType(v): "Int";
+        arrType(v): "(Array " + t2s(v) + " " + t2s(v) + ")" 
+    }
 }
 
 b2ac(body: Body, f: Formula) -> Formula{
