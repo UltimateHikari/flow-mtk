@@ -63,7 +63,15 @@ c2s(f: Formula) -> string {
         And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
         Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
         Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
-        Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
+        Repl(e, x, t): {
+            es = c2s(e);
+            //println("");
+            //println(f);
+            //println("e: " + es);
+            s = strReplace(es, c2s(x), c2s(t));
+            //println("s: " + s);
+            s
+        };
         Int(v):        i2s(v);
         Arr(a):        "[err]"// TODO array expression
         Var(n):        n;

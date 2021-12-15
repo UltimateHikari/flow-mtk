@@ -49,7 +49,7 @@ testVerify(p: Prog, verbose: bool) {
     f1 = n2c(p);
     if(verbose){
         println(f1);
-        println(c2s(f1));
+        println("to-verify: " + c2s(f1));
     } else {
         println("   Success");
     }
