@@ -49,7 +49,7 @@ less   = "(" ws exp:l ws "<" ws exp:r ws ")"            { Less(:l, :r)     };
 more   = "(" ws exp:l ws ">" ws exp:r ws ")"            { Less(:r, :l)     };
 eless   = "(" ws exp:l ws "<=" ws exp:r ws ")"          { Not(Less(:r, :l))};
 emore   = "(" ws exp:l ws ">=" ws exp:r ws ")"          { Not(Less(:l, :r))};
-eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { Prod(Not(Less(:r, :l)), Not(Less(:l, :r))) };
+eq      = "(" ws exp:l ws "==" ws exp:r ws ")" { And(Not(Less(:r, :l)), Not(Less(:l, :r))) };
 
 ws = s*;
 s = " " | "\t" | "\n";

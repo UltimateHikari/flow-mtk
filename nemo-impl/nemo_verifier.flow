@@ -46,7 +46,7 @@ b2vc(body: Body, f: Formula) -> Formula{
         // stupid me, should've stuck with pairs
         nUnion(b): {
             fold(
-            mapi(b, \ind, elem -> if(ind == length(b) - 1){ b2vc(elem, f) } else { b2vc(elem, b2ac(nSeq(tailFrom(b, ind + 1))  ,f))}),
+            mapi(b, \ind, elem -> if(ind == length(b) - 1){ b2vc(elem, f) } else { b2vc(elem, b2ac(nSeq(tailFrom(b, ind + 1)) , f))}),
             Nop(),
             \acc, elem -> And(acc, elem))
         }
@@ -62,7 +62,7 @@ c2s(f: Formula) -> string {
         Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
         And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
         Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
-        Neg(e):        strGlue(["( not", c2s(e), ")"],             " ");
+        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
         Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
         Int(v):        i2s(v);
         Arr(a):        "[err]"// TODO array expression

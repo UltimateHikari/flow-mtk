@@ -6,7 +6,7 @@ VAR n : INT;
     (x := 0);
     (y := 0);
     (
-        @(NOP)
+        @(y == (x*x))
         WHILE
         (y < n)
         DO
