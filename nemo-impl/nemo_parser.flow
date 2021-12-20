@@ -10,43 +10,59 @@ export{
     Decl: (v: Var, t: Type);
 
     Val ::= Int, Arr;
-    Int: (v: int);
-    Arr: (a: [Val]);
+        Int: (v: int);
+        Arr: (a: [Val]);
     
     Var(n: string);
     Type ::= bType, arrType;
-    bType : (t: string);
-    arrType : (t: Type);
+        bType : (t: string);
+        arrType : (t: Type);
 
     Body ::= nAssign, nTest, nSeq, nUnion, nIter, nPrint;
-    nAssign: (v: Var, e: Exp);
-    nTest:  (e: Exp);
-    nSeq: (b: [Body]);
-    nUnion: (b: [Body]);
-    nIter: (a: Annotation, b: Body);
-    nPrint: (e: Exp);
+        nAssign: (v: Var, e: Exp);
+        nTest:  (e: Exp);
+        nSeq: (b: [Body]);
+        nUnion: (b: [Body]);
+        nIter: (a: Annotation, b: Body);
+        nPrint: (e: Exp);
 
-    Exp ::= Val, Var, Sum, Sub, Prod, Div, aSet, aGet, aLen, Not, Less;
-    Sum : (l: Exp, r: Exp);
-    Prod : (l: Exp, r: Exp);
-    Sub : (l: Exp, r: Exp);
-    Div : (l: Exp, r: Exp);
-    aSet : (a: Var, i: Int, v: Exp); 
-    aGet : (a: Var, i: Int);
-    aLen : (a: Var);
-    Not(e: Exp);
-    Less : (l: Exp, r: Exp);
+    Exp ::= ArExp, NemoExp, CompExp;
+        ArExp ::= Val, Var, Sum, Sub, Prod, Div;
+            Sum : (l: Exp, r: Exp);
+            Prod : (l: Exp, r: Exp);
+            Sub : (l: Exp, r: Exp);
+            Div : (l: Exp, r: Exp);
+        NemoExp ::= aSet, aGet, aLen;
+            aSet : (a: Var, i: Int, v: Exp); 
+            aGet : (a: Var, i: Int);
+            aLen : (a: Var);
+        CompExp ::= Not, Less;
+            Not(e: Exp);
+            Less : (l: Exp, r: Exp);
 
     Annotation : (f: Formula);
-    Formula ::= Forall, Exists, Or, And, Impl, Neg, Repl, Exp, Nop;
-    Forall : (x: Var, e: Formula);
-    Exists : (x: Var, e: Formula);
-    Or : (l: Formula, r: Formula);
-    And : (l: Formula, r: Formula);
-    Impl : (l: Formula, r: Formula);
-    Neg : (e:Formula);
-    Repl : (e: Formula, x: Var, t: Exp);
-    Nop : (); // empty formula for reasons of non-maybe strictness
+    Formula ::= LogicFormula, fExp, Nop;
+        LogicFormula ::= Forall, Exists, Or, And, Impl, Neg, Repl;
+            Forall : (x: Var, e: Formula);
+            Exists : (x: Var, e: Formula);
+            Or : (l: Formula, r: Formula);
+            And : (l: Formula, r: Formula);
+            Impl : (l: Formula, r: Formula);
+            Neg : (e:Formula);
+            Repl : (e: Formula, x: Var, t: fExp);
+        fExp ::= ArfExp, CompfExp;
+            ArfExp ::= Val, Var, fSum, fSub, fProd, fDiv;
+                fSum : (l: ArfExp, r: ArfExp);
+                fProd : (l: ArfExp, r: ArfExp);
+                fSub : (l: ArfExp, r: ArfExp);
+                fDiv : (l: ArfExp, r: ArfExp);
+            CompfExp ::= fLess, fMore, fELess, fEMore, fEq;
+                fLess : (l: fExp, r: fExp);
+                fMore : (l: fExp, r: fExp);
+                fELess : (l: fExp, r: fExp);
+                fEMore : (l: fExp, r: fExp);
+                fEq : (l: fExp, r: fExp);
+        Nop : (); // empty formula for reasons of non-maybe strictness
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now
