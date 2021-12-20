@@ -4,44 +4,28 @@ import nemo_parser;
 import nemo_vnemo;
 
 export{
-    // conjunction of ac and all vc
-    n2c(p: Prog) -> string;
-    c2s(f: Formula) -> string;
+    Conditions : (p: Prog, ac : Formula, vc: [Formula]);
+    n2c(p: Prog) -> Conditions;
 }
 
-n2c(p: Prog) -> string {
-    res = fold(p.h, "", folddecl);
-    // body & aftercondition
-    ac = denop(denop(denop(
-        Impl(p.bc.f, b2ac(p.b, p.ac.f))
-    )));
-    vc = denop(denop(denop(
-        b2vc(p.b, p.ac.f)
-    )));
-    // //lazy way of aestetic fold artifacts removal
-    // denop(denop(denop(denop(
-    //     And(p.bc.f, And(p.ac.f, And(ac, vc)))
-    // ))));
-    res + f2smt(ac) + f2smt(vc)
-}
+// ac without \phi => ac
+b2ac(body: Body, f: Formula) -> Formula;
+b2vc(body: Body, f: Formula) -> [Formula];
+//recursive simplification of and(nop, nop)
+rdenop(f: Formula, amount: int) -> Formula;
+denop(f: Formula) -> Formula;
+anddenop(l:Formula, r:Formula) -> Formula;
 
-folddecl(acc: string, d: Decl) -> string{
-    acc + "(declare-const " + d.v.n + " " + t2s(d.t) + ")\n"
-}
-
-f2smt(f: Formula) -> string{
-    "(push)\n(assert (not  " + c2s(f) + "  ))\n(check-sat)\n(get-model)\n(pop)\n" 
-}
-
-smtend() -> string{
-    "(check-sat)\n(get-model)"
-}
-
-t2s(t: Type) -> string{
-    switch(t){
-        bType(v): "Int";
-        arrType(v): "(Array " + t2s(v) + " " + t2s(v) + ")" 
-    }
+n2c(p: Prog) -> Conditions{
+    ac = rdenop(
+        Impl(p.bc.f, b2ac(p.b, p.ac.f)),
+        2
+    );
+    vc = rdenop(
+        b2vc(p.b, p.ac.f),
+        2
+    );
+    Conditions(p, ac, vc);
 }
 
 b2ac(body: Body, f: Formula) -> Formula{
@@ -57,7 +41,7 @@ b2ac(body: Body, f: Formula) -> Formula{
     }
 }
 
-b2vc(body: Body, f: Formula) -> Formula{
+b2vc(body: Body, f: Formula) -> [Formula]{
     switch (body) {
         nAssign(v, e): Nop();
         nTest(e): Nop();
@@ -80,36 +64,11 @@ b2vc(body: Body, f: Formula) -> Formula{
     }
 }
 
-c2s(f: Formula) -> string {
-    switch (f) {
-        Forall(x, e) : strGlue(["(forall", c2s(x), c2s(e), ")"], " ");
-        Exists(x, e) : strGlue(["(exists", c2s(x), c2s(e), ")"], " ");
-        Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
-        And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
-        Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
-        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
-        Repl(e, x, t): {
-            es = c2s(e);
-            //println("");
-            //println(f);
-            //println("e: " + es);
-            s = strReplace(es, c2s(x), c2s(t));
-            //println("s: " + s);
-            s
-        };
-        Int(v):        i2s(v);
-        Arr(a):        "[err]"// TODO array expression
-        Var(n):        n;
-        Sum(l, r):     strGlue(["( +", c2s(l), c2s(r), ")"],      " ");
-        Sub(l, r):     strGlue(["( -", c2s(l), c2s(r), ")"],      " ");
-        Prod(l, r):    strGlue(["( *", c2s(l), c2s(r), ")"],      " ");
-        Div(l, r):     strGlue(["( /", c2s(l), c2s(r), ")"],      " ");
-        aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
-        aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
-        aLen(a):       "err"; //should not be in formula
-        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
-        Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
-        Nop():         "(= 1 1)"
+rdenop(f: Formula, amount: int) -> Formula{
+    if(denopamount > 0){
+        rdenop(denop(f), denopamount - 1);
+    } else {
+        denop(f);
     }
 }
 

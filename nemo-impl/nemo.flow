@@ -5,7 +5,7 @@ import nemo_translator;
 import nemo_verifier;
 
 testGet(i: int, s: string, verbose: bool) -> string {
-    example = getFileContent(s);
+    example = getFileContent("./test/" + s + ".txt");
     println("TEST" + i2s(i) + ":" + s + ":");
     if(verbose){println(example)};
     example
@@ -44,7 +44,7 @@ testExecute(v: vProg, verbose: bool) {
     vExecute(v);
 }
 
-testVerify(p: Prog, verbose: bool) {
+testVerify(s: string, p: Prog, verbose: bool) {
     println("   VERIFYING:");
     f1 = n2c(p);
     if(verbose){
@@ -53,6 +53,7 @@ testVerify(p: Prog, verbose: bool) {
     } else {
         println("   Success");
     }
+    setFileContent("./out/" + s + ".smt", f1);
 }
 
 testNemo(i: int, s: string, verbose: bool, skipExecute: bool) -> void {
@@ -62,7 +63,7 @@ testNemo(i: int, s: string, verbose: bool, skipExecute: bool) -> void {
     if(!skipExecute){
         testExecute(virtualProg, verbose);
     }
-    testVerify(parsedProg, verbose);
+    testVerify(s, parsedProg, verbose);
     println("\n\n");
 }
 
@@ -73,5 +74,5 @@ main(){
     verbose = true;
     skipExecute = true;
     tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "swap", "sqrt", "sqrt-c"];
-    mapi(tests, \i, x -> testNemo(i, "./test/" + x + ".txt", verbose, skipExecute));
+    mapi(tests, \i, x -> testNemo(i, x, verbose, skipExecute));
 }

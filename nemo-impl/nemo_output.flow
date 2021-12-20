@@ -1,0 +1,92 @@
+import ds/array;
+import string;
+import nemo_verifier;
+import nemo_parser;
+
+export{
+    cond2s(c: Conditions) -> string;
+    cond2hs(c: Conditions) -> string;
+}
+
+folddecl(acc: string, d: Decl) -> string;
+f2smt(f: Formula) -> string;
+t2s(t: Type) -> string;
+
+// smt-lib notation
+c2s(f: Formula) -> string;
+//human-readable (for debug)
+c2hs(f: Formula) -> string;
+
+cond2s(c: Conditions) -> string{
+    res = fold(c.p.h, "", folddecl);
+    strGlue(concat3([res], [f2smt(c.ac)], map(c.vc, f2smt) ), "\n")
+}
+
+cond2hs(c: Conditions) -> string{
+    strGlue(concat([c2hs(c.ac)], map(c.vc, c2hs)), "\n");
+}
+
+folddecl(acc: string, d: Decl) -> string{
+    acc + "(declare-const " + d.v.n + " " + t2s(d.t) + ")\n"
+}
+
+f2smt(f: Formula) -> string{
+    "(push)\n(assert (not  " + c2s(f) + "  ))\n(check-sat)\n(get-model)\n(pop)" 
+}
+
+t2s(t: Type) -> string{
+    switch(t){
+        bType(v): "Int";
+        arrType(v): "(Array " + t2s(v) + " " + t2s(v) + ")" 
+    }
+}
+
+c2s(f: Formula) -> string {
+    switch (f) {
+        Forall(x, e) : strGlue(["(forall", c2s(x), c2s(e), ")"], " ");
+        Exists(x, e) : strGlue(["(exists", c2s(x), c2s(e), ")"], " ");
+        Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
+        And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
+        Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
+        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
+        Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
+        Int(v):        i2s(v);
+        Arr(a):        "[err]"// TODO array expression
+        Var(n):        n;
+        Sum(l, r):     strGlue(["( +", c2s(l), c2s(r), ")"],      " ");
+        Sub(l, r):     strGlue(["( -", c2s(l), c2s(r), ")"],      " ");
+        Prod(l, r):    strGlue(["( *", c2s(l), c2s(r), ")"],      " ");
+        Div(l, r):     strGlue(["( /", c2s(l), c2s(r), ")"],      " ");
+        aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
+        aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
+        aLen(a):       "err"; //should not be in formula
+        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
+        Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
+        Nop():         "(= 1 1)"
+    }
+}
+
+c2hs(f: Formula) -> string {
+    switch (f) {
+        Forall(x, e) : strGlue(["(forall", c2s(x), c2s(e), ")"], " ");
+        Exists(x, e) : strGlue(["(exists", c2s(x), c2s(e), ")"], " ");
+        Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
+        And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
+        Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
+        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
+        Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
+        Int(v):        i2s(v);
+        Arr(a):        "[err]"// TODO array expression
+        Var(n):        n;
+        Sum(l, r):     strGlue(["( +", c2s(l), c2s(r), ")"],      " ");
+        Sub(l, r):     strGlue(["( -", c2s(l), c2s(r), ")"],      " ");
+        Prod(l, r):    strGlue(["( *", c2s(l), c2s(r), ")"],      " ");
+        Div(l, r):     strGlue(["( /", c2s(l), c2s(r), ")"],      " ");
+        aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
+        aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
+        aLen(a):       "err"; //should not be in formula
+        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
+        Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
+        Nop():         "(= 1 1)"
+    }
+}
