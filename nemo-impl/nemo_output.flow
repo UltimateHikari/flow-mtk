@@ -19,11 +19,11 @@ c2hs(f: Formula) -> string;
 
 cond2s(c: Conditions) -> string{
     res = fold(c.p.h, "", folddecl);
-    strGlue(concat3([res], [f2smt(c.ac)], [f2smt(c.vc)]/*map(c.vc, f2smt)*/ ), "\n")
+    strGlue(concat3([res], [f2smt(c.ac)], /*[f2smt(c.vc)]*/map(c.vc, f2smt)), "\n")
 }
 
 cond2hs(c: Conditions) -> string{
-    strGlue(concat([c2hs(c.ac)], [c2hs(c.vc)]/*map(c.vc, c2hs)*/), "\n");
+    strGlue(concat([c2hs(c.ac)], /*[c2hs(c.vc)]*/map(c.vc, c2hs)), "\n");
 }
 
 folddecl(acc: string, d: Decl) -> string{
@@ -81,7 +81,7 @@ c2hs(f: Formula) -> string {
         Exists(x, e) : strGlue(["(exists", c2hs(x), c2hs(e), ")"], " ");
         Or(l, r):      strGlue(["(", c2hs(l), "|", c2hs(r), ")"],      " ");
         And(l, r):     strGlue(["(", c2hs(l), "&", c2hs(r), ")"],     " ")
-        Impl(l, r):    strGlue(["(", c2hs(l), "=>", c2hs(r), ")"],      " ");
+        Impl(l, r):    strGlue(["(", c2hs(l), "->", c2hs(r), ")"],      " ");
         Neg(e):        strGlue(["!", c2hs(e)],             "");
         Repl(e, x, t): strGlue(["(", c2hs(e), "{", c2hs(x), "}{",  c2hs(t), "})"], " ");
 

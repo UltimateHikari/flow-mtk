@@ -5,8 +5,3 @@
 (check-sat)
 (get-model)
 (pop)
-(push)
-(assert (not  (= 1 1)  ))
-(check-sat)
-(get-model)
-(pop)

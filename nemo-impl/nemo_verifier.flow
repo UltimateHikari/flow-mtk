@@ -4,13 +4,13 @@ import nemo_parser;
 import nemo_vnemo;
 
 export{
-    Conditions : (p: Prog, ac : Formula, vc: Formula);
+    Conditions : (p: Prog, ac : Formula, vc: [Formula]);
     n2c(p: Prog) -> Conditions;
 }
 
 // ac without \phi => ac
 b2ac(body: Body, f: Formula) -> Formula;
-b2vc(body: Body, f: Formula) -> Formula; //TODO make it [Formula]
+b2vc(body: Body, f: Formula) -> [Formula]; //TODO make it [Formula]
 //recursive simplification of and(nop, nop)
 rdenop(f: Formula, amount: int) -> Formula;
 denop(f: Formula) -> Formula;
@@ -21,10 +21,10 @@ n2c(p: Prog) -> Conditions{
         Impl(p.bc.f, b2ac(p.b, p.ac.f)),
         2
     );
-    vc = rdenop(
+    vc = map(
         b2vc(p.b, p.ac.f),
-        2
-    );
+        \x ->rdenop(x, 2)
+        );
     Conditions(p, ac, vc);
 }
 
@@ -34,33 +34,43 @@ b2ac(body: Body, f: Formula) -> Formula{
     switch (body) {
         nAssign(v, e): Repl(f, v, e);
         nTest(e): Impl(e, f);
-        nSeq(b): foldr(b, f, \acc, elem -> b2ac(elem, acc));
+        nSeq(b): {
+            if(length(b) == 2){
+                b2ac(b[0], b2ac(b[1], f));
+            } else {
+                b2ac(b[0], b2ac(nSeq(tailFrom(b,1)), f));
+            }
+        }
         nUnion(b): fold(b, Nop(), \acc, elem -> And(acc, b2ac(elem, f)));
         nIter(a, b): a.f;
         nPrint(e): f;
     }
 }
 
-b2vc(body: Body, f: Formula) -> Formula{
+b2vc(body: Body, f: Formula) -> [Formula]{
     switch (body) {
-        nAssign(v, e): Nop();
-        nTest(e): Nop();
+        nAssign(v, e): [];
+        nTest(e): [];
         nSeq(b): {
-            fold(
-            mapi(b, \ind, elem -> if(ind == length(b) - 1){ b2vc(elem,f) } else { b2vc(elem, b2ac(b[ind + 1], f)) }),
-            Nop(),
-            \acc, elem -> And(acc, elem))
+            if(length(b) == 2){
+                concat(b2vc(b[0],b2ac(b[1],f)), b2vc(b[1],f));
+            } else {
+                tail = nSeq(tailFrom(b,1));
+                concat(b2vc(b[0],b2ac(tail,f)), b2vc(tail,f));
+            }
         }
         // implementation with [] instead of pair made this o(n2) abomination
         // stupid me, should've stuck with pairs
         nUnion(b): {
             fold(
-            mapi(b, \ind, elem -> if(ind == length(b) - 1){ b2vc(elem, f) } else { b2vc(elem, b2ac(nSeq(tailFrom(b, ind + 1)) , f))}),
-            Nop(),
-            \acc, elem -> And(acc, elem))
+            map(b, \elem -> b2vc(elem, f)),
+            [],
+            \acc, elem -> concat(acc, elem))
         }
-        nIter(a, b): And(b2vc(b, f), And(Impl(a.f, f), Impl(a.f, b2ac(b, a.f))));
-        nPrint(e): Nop();
+        nIter(a, b): {
+            concat(b2vc(b, f), [Impl(a.f, f), Impl(a.f, b2ac(b, a.f))]);
+        }
+        nPrint(e): [];
     }
 }
 
