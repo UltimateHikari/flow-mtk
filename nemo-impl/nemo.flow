@@ -3,6 +3,7 @@ import maybe;
 import nemo_parser;
 import nemo_translator;
 import nemo_verifier;
+import nemo_output;
 
 testGet(i: int, s: string, verbose: bool) -> string {
     example = getFileContent("./test/" + s + ".txt");
@@ -46,14 +47,15 @@ testExecute(v: vProg, verbose: bool) {
 
 testVerify(s: string, p: Prog, verbose: bool) {
     println("   VERIFYING:");
-    f1 = n2c(p);
+    conditions = n2c(p);
+    f_h = cond2hs(conditions);
+    f_smt = cond2s(conditions);
     if(verbose){
-        println(f1);
-        //println("to-verify: " + c2s(f1));
+        println(f_h);
     } else {
         println("   Success");
     }
-    setFileContent("./out/" + s + ".smt", f1);
+    setFileContent("./out/" + s + ".smt", f_smt);
 }
 
 testNemo(i: int, s: string, verbose: bool, skipExecute: bool) -> void {

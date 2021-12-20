@@ -4,13 +4,13 @@ import nemo_parser;
 import nemo_vnemo;
 
 export{
-    Conditions : (p: Prog, ac : Formula, vc: [Formula]);
+    Conditions : (p: Prog, ac : Formula, vc: Formula);
     n2c(p: Prog) -> Conditions;
 }
 
 // ac without \phi => ac
 b2ac(body: Body, f: Formula) -> Formula;
-b2vc(body: Body, f: Formula) -> [Formula];
+b2vc(body: Body, f: Formula) -> Formula; //TODO make it [Formula]
 //recursive simplification of and(nop, nop)
 rdenop(f: Formula, amount: int) -> Formula;
 denop(f: Formula) -> Formula;
@@ -41,7 +41,7 @@ b2ac(body: Body, f: Formula) -> Formula{
     }
 }
 
-b2vc(body: Body, f: Formula) -> [Formula]{
+b2vc(body: Body, f: Formula) -> Formula{
     switch (body) {
         nAssign(v, e): Nop();
         nTest(e): Nop();
@@ -65,8 +65,8 @@ b2vc(body: Body, f: Formula) -> [Formula]{
 }
 
 rdenop(f: Formula, amount: int) -> Formula{
-    if(denopamount > 0){
-        rdenop(denop(f), denopamount - 1);
+    if(amount > 0){
+        rdenop(denop(f), amount - 1);
     } else {
         denop(f);
     }

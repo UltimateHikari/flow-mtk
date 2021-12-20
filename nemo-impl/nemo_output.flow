@@ -13,17 +13,17 @@ f2smt(f: Formula) -> string;
 t2s(t: Type) -> string;
 
 // smt-lib notation
-c2s(f: Formula) -> string;
+c2hs(f: Formula) -> string;
 //human-readable (for debug)
 c2hs(f: Formula) -> string;
 
 cond2s(c: Conditions) -> string{
     res = fold(c.p.h, "", folddecl);
-    strGlue(concat3([res], [f2smt(c.ac)], map(c.vc, f2smt) ), "\n")
+    strGlue(concat3([res], [f2smt(c.ac)], [f2smt(c.vc)]/*map(c.vc, f2smt)*/ ), "\n")
 }
 
 cond2hs(c: Conditions) -> string{
-    strGlue(concat([c2hs(c.ac)], map(c.vc, c2hs)), "\n");
+    strGlue(concat([c2hs(c.ac)], [c2hs(c.vc)]/*map(c.vc, c2hs)*/), "\n");
 }
 
 folddecl(acc: string, d: Decl) -> string{
@@ -68,25 +68,23 @@ c2s(f: Formula) -> string {
 
 c2hs(f: Formula) -> string {
     switch (f) {
-        Forall(x, e) : strGlue(["(forall", c2s(x), c2s(e), ")"], " ");
-        Exists(x, e) : strGlue(["(exists", c2s(x), c2s(e), ")"], " ");
-        Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
-        And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
-        Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
-        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
-        Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
+        Forall(x, e) : strGlue(["(forall", c2hs(x), c2hs(e), ")"], " ");
+        Exists(x, e) : strGlue(["(exists", c2hs(x), c2hs(e), ")"], " ");
+        Or(l, r):      strGlue(["(", c2hs(l), "|", c2hs(r), ")"],      " ");
+        And(l, r):     strGlue(["(", c2hs(l), "&", c2hs(r), ")"],     " ")
+        Impl(l, r):    strGlue(["(", c2hs(l), "=>", c2hs(r), ")"],      " ");
+        Repl(e, x, t): strGlue(["(", c2hs(e), "{", c2hs(x), "}{",  c2hs(t), "})"], " ");
         Int(v):        i2s(v);
-        Arr(a):        "[err]"// TODO array expression
         Var(n):        n;
-        Sum(l, r):     strGlue(["( +", c2s(l), c2s(r), ")"],      " ");
-        Sub(l, r):     strGlue(["( -", c2s(l), c2s(r), ")"],      " ");
-        Prod(l, r):    strGlue(["( *", c2s(l), c2s(r), ")"],      " ");
-        Div(l, r):     strGlue(["( /", c2s(l), c2s(r), ")"],      " ");
-        aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
-        aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
-        aLen(a):       "err"; //should not be in formula
-        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
-        Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
-        Nop():         "(= 1 1)"
+        Sum(l, r):     strGlue(["(", c2hs(l), "+", c2hs(r), ")"],      " ");
+        Sub(l, r):     strGlue(["(", c2hs(l), "-", c2hs(r), ")"],      " ");
+        Prod(l, r):    strGlue(["(", c2hs(l), "*", c2hs(r), ")"],      " ");
+        Div(l, r):     strGlue(["(", c2hs(l), "/", c2hs(r), ")"],      " ");
+        aSet(a, i, v): strGlue(["(store", c2hs(a), c2hs(i), c2hs(v), ")"], " ");
+        aGet(a, i):    strGlue(["(select", c2hs(a), c2hs(i), ")"],  " ");
+        Not(e):        strGlue(["!", c2hs(e)],             "");
+        Less(l, r):    strGlue(["(", c2hs(l), "<", c2hs(r), ")"],      " ");
+        Nop():         "(1 = 1)"
+        default: "err"; //Arr(), Neg(), aLen()
     }
 }
