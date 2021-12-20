@@ -6,7 +6,7 @@
 (get-model)
 (pop)
 (push)
-(assert (not  ( and ( => ( not ( - a 105 ) ) (= 1 1) ) ( => ( - a 105 ) (= 1 1) ) )  ))
+(assert (not  ( and ( => err (= 1 1) ) ( => ( - a 105 ) (= 1 1) ) )  ))
 (check-sat)
 (get-model)
 (pop)

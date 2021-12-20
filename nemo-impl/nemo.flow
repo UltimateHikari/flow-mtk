@@ -48,6 +48,8 @@ testExecute(v: vProg, verbose: bool) {
 testVerify(s: string, p: Prog, verbose: bool) {
     println("   VERIFYING:");
     conditions = n2c(p);
+    println(conditions.ac);
+    println(conditions.vc);
     f_h = cond2hs(conditions);
     f_smt = cond2s(conditions);
     if(verbose){

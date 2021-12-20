@@ -48,21 +48,30 @@ c2s(f: Formula) -> string {
         Or(l, r):      strGlue(["( or", c2s(l), c2s(r), ")"],      " ");
         And(l, r):     strGlue(["( and", c2s(l), c2s(r), ")"],     " ")
         Impl(l, r):    strGlue(["( =>", c2s(l), c2s(r), ")"],      " ");
-        Neg(e):        strGlue(["( net", c2s(e), ")"],             " ");
+        Neg(e):        strGlue(["( not", c2s(e), ")"],             " ");
         Repl(e, x, t): strReplace(c2s(e), c2s(x), c2s(t));
+
         Int(v):        i2s(v);
-        Arr(a):        "[err]"// TODO array expression
+        Arr(a):        "err"
         Var(n):        n;
         Sum(l, r):     strGlue(["( +", c2s(l), c2s(r), ")"],      " ");
         Sub(l, r):     strGlue(["( -", c2s(l), c2s(r), ")"],      " ");
         Prod(l, r):    strGlue(["( *", c2s(l), c2s(r), ")"],      " ");
         Div(l, r):     strGlue(["( /", c2s(l), c2s(r), ")"],      " ");
-        aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
-        aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
-        aLen(a):       "err"; //should not be in formula
-        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
+
+        // aSet(a, i, v): strGlue(["(store", c2s(a), c2s(i), c2s(v), ")"], " ");
+        // aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
+        // aLen(a):       "err"; //should not be in formula
+
         Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
+        More(l, r):    strGlue(["( >", c2s(l), c2s(r), ")"],      " ");
+        ELess(l, r):    strGlue(["( <=", c2s(l), c2s(r), ")"],      " ");
+        EMore(l, r):    strGlue(["( >=", c2s(l), c2s(r), ")"],      " ");
+        Eq(l, r):    strGlue(["( =", c2s(l), c2s(r), ")"],      " ");
+        
         Nop():         "(= 1 1)"
+
+        default: "err" //aset,aget,alen,not
     }
 }
 
@@ -73,18 +82,26 @@ c2hs(f: Formula) -> string {
         Or(l, r):      strGlue(["(", c2hs(l), "|", c2hs(r), ")"],      " ");
         And(l, r):     strGlue(["(", c2hs(l), "&", c2hs(r), ")"],     " ")
         Impl(l, r):    strGlue(["(", c2hs(l), "=>", c2hs(r), ")"],      " ");
+        Neg(e):        strGlue(["!", c2hs(e)],             "");
         Repl(e, x, t): strGlue(["(", c2hs(e), "{", c2hs(x), "}{",  c2hs(t), "})"], " ");
+
         Int(v):        i2s(v);
+        Arr(a):        "err"
         Var(n):        n;
         Sum(l, r):     strGlue(["(", c2hs(l), "+", c2hs(r), ")"],      " ");
         Sub(l, r):     strGlue(["(", c2hs(l), "-", c2hs(r), ")"],      " ");
         Prod(l, r):    strGlue(["(", c2hs(l), "*", c2hs(r), ")"],      " ");
         Div(l, r):     strGlue(["(", c2hs(l), "/", c2hs(r), ")"],      " ");
-        aSet(a, i, v): strGlue(["(store", c2hs(a), c2hs(i), c2hs(v), ")"], " ");
-        aGet(a, i):    strGlue(["(select", c2hs(a), c2hs(i), ")"],  " ");
-        Not(e):        strGlue(["!", c2hs(e)],             "");
+
+        // aSet(a, i, v): strGlue(["(store", c2hs(a), c2hs(i), c2hs(v), ")"], " ");
+        // aGet(a, i):    strGlue(["(select", c2hs(a), c2hs(i), ")"],  " ");
         Less(l, r):    strGlue(["(", c2hs(l), "<", c2hs(r), ")"],      " ");
+        More(l, r):    strGlue(["(", c2hs(l), ">", c2hs(r), ")"],      " ");
+        ELess(l, r):    strGlue(["(", c2hs(l), "<=", c2hs(r), ")"],      " ");
+        EMore(l, r):    strGlue(["(", c2hs(l), ">=", c2hs(r), ")"],      " ");
+        Eq(l, r):    strGlue(["(", c2hs(l), "=", c2hs(r), ")"],      " ");
+        
         Nop():         "(1 = 1)"
-        default: "err"; //Arr(), Neg(), aLen()
+        default: "err" //aset,aget,alen,not
     }
 }

@@ -36,12 +36,16 @@ export{
             aSet : (a: Var, i: Int, v: Exp); 
             aGet : (a: Var, i: Int);
             aLen : (a: Var);
-        CompExp ::= Not, Less;
+        CompExp ::= Not, Less, More, ELess, EMore, Eq;
             Not(e: Exp);
             Less : (l: Exp, r: Exp);
+            More : (l: Exp, r: Exp);
+            ELess : (l: Exp, r: Exp);
+            EMore : (l: Exp, r: Exp);
+            Eq : (l: Exp, r: Exp);
 
     Annotation : (f: Formula);
-    Formula ::= LogicFormula, fExp, Nop;
+    Formula ::= LogicFormula, Exp, Nop;
         LogicFormula ::= Forall, Exists, Or, And, Impl, Neg, Repl;
             Forall : (x: Var, e: Formula);
             Exists : (x: Var, e: Formula);
@@ -49,19 +53,7 @@ export{
             And : (l: Formula, r: Formula);
             Impl : (l: Formula, r: Formula);
             Neg : (e:Formula);
-            Repl : (e: Formula, x: Var, t: fExp);
-        fExp ::= ArfExp, CompfExp;
-            ArfExp ::= Val, Var, fSum, fSub, fProd, fDiv;
-                fSum : (l: ArfExp, r: ArfExp);
-                fProd : (l: ArfExp, r: ArfExp);
-                fSub : (l: ArfExp, r: ArfExp);
-                fDiv : (l: ArfExp, r: ArfExp);
-            CompfExp ::= fLess, fMore, fELess, fEMore, fEq;
-                fLess : (l: fExp, r: fExp);
-                fMore : (l: fExp, r: fExp);
-                fELess : (l: fExp, r: fExp);
-                fEMore : (l: fExp, r: fExp);
-                fEq : (l: fExp, r: fExp);
+            Repl : (e: Formula, x: Var, t: Exp);
         Nop : (); // empty formula for reasons of non-maybe strictness
 
     parse(s: string) -> Maybe<Prog>;

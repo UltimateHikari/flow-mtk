@@ -129,6 +129,11 @@ e2v(e: Exp) -> vExp{
         aLen(a): vLen(vVar(a.n));
         Not(a): vNot(e2v(a));
         Less(l, r): vLess(e2v(l), e2v(r));
+        More(l, r): vLess(e2v(r), e2v(l));
+        ELess(l, r): vNot(vLess(e2v(r), e2v(l)));
+        EMore(l, r): vNot(vLess(e2v(l), e2v(r)));
+        // NOTE PROD INSTEAD OF AND
+        Eq(l, r): vProd(vNot(vLess(e2v(r), e2v(l))),vNot(vLess(e2v(l), e2v(r)))); 
     }
 }
 
