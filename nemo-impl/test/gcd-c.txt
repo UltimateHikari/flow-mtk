@@ -10,7 +10,7 @@ VAR rem : INT;
     (a := x);
     (b := y);
     (
-        @(NOP)
+        @(A dd ((dd < (a + b)) => ((PRED nod a b dd) => (PRED nod x y dd))) )
         WHILE
         b
         DO
@@ -31,4 +31,4 @@ VAR rem : INT;
     );
     (PRINT a)
 )}
-@(NOP)
+@((PRED nod x y rem) & (b == 0))

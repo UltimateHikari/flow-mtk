@@ -45,7 +45,7 @@ export{
             Eq : (l: Exp, r: Exp);
 
     Annotation : (f: Formula);
-    Formula ::= LogicFormula, Exp, Nop;
+    Formula ::= LogicFormula, Exp, Nop, Pred;
         LogicFormula ::= Forall, Exists, Or, And, Impl, Neg, Repl;
             Forall : (x: Var, e: Formula);
             Exists : (x: Var, e: Formula);
@@ -55,6 +55,7 @@ export{
             Neg : (e:Formula);
             Repl : (e: Formula, x: Var, t: Exp);
         Nop : (); // empty formula for reasons of non-maybe strictness
+        Pred: (n:Var, e: [Exp]);
 
     parse(s: string) -> Maybe<Prog>;
     // no pr2s for now

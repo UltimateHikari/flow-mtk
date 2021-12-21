@@ -71,8 +71,8 @@ c2s(f: Formula) -> string {
         Eq(l, r):    strGlue(["( =", c2s(l), c2s(r), ")"],      " ");
         
         Nop():         "(= 1 1)"
-
-        default: "err" //aset,aget,alen,not
+        Pred(n, e): strGlue(concat3(["(", c2hs(n)], map(e, c2hs), [")"]), " ");
+        default: "err" //aset,aget,alen
     }
 }
 
@@ -104,6 +104,7 @@ c2hs(f: Formula) -> string {
         Eq(l, r):    strGlue(["(", c2hs(l), "=", c2hs(r), ")"],      " ");
         
         Nop():         "(1 = 1)"
-        default: "err" //aset,aget,alen,not
+        Pred(n, e): strGlue(concat3(["(", c2hs(n)], map(e, c2hs), [")"]), " ");
+        default: "err" //aset,aget,alen
     }
 }

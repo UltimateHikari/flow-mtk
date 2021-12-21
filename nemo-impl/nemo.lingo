@@ -26,7 +26,7 @@ body = assign | test | seq | union | iter | print | while;
     while  = "(" ws annt:a ws "WHILE" ws exp:e ws "DO" ws body:b ws "DONE" ws ")" { buildWhile(:a, :e, :b) };
 
 annt = "@" ws formula:f                                           { Annotation(:f)        };
-formula = logicformula | exp | nop;
+formula = logicformula | exp | nop | pred;
     logicformula = forall | exists | or | and | impl | neg | repl;
         forall  = "(" ws "A" ws var:x ws formula:e ws ")"                 { Forall(:x, :e)  };
         exists  = "(" ws "E" ws var:x ws formula:e ws ")"                 { Exists(:x, :e)  };
@@ -36,6 +36,8 @@ formula = logicformula | exp | nop;
         neg     = "(" ws "NOT" ws formula:e ws ")"                        { Neg(:e)         };
         repl    = "(" ws formula:f ws "R" ws var:x ws "W" ws exp:e ws ")"{ Repl(:f, :x, :e)};
     nop     = "(" ws "NOP" ws ")"                                    { Nop()            };
+    pred = "(" ws "PRED" ws var:n ws predentr+:p ")" {Pred(:n, :p)};
+    predentr = exp:e ws {:e};
 
 exp = arexp | nemoexp | compexp;
     arexp = var | val | sum | sub | prod | div;

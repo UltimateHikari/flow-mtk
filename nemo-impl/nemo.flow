@@ -79,6 +79,6 @@ main(){
     // then insert with not() in z3 and check sat
     verbose = true;
     skipExecute = true;
-    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "swap", "sqrt", "sqrt-c"];
+    tests = ["example", "type", "test", "union", "long", "array", "while", "gcd", "swap", "sqrt", "sqrt-c", "gcd-c"];
     mapi(tests, \i, x -> testNemo(i, x, verbose, skipExecute));
 }
