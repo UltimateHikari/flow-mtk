@@ -8,7 +8,7 @@
 (get-model)
 (pop)
 (push)
-(assert (not  ( => err ( and ( <= ( - x 1 ) n ) ( > ( + ( - x 1 ) 1 ) n ) ) )  ))
+(assert (not  ( => ( not ( < y n ) ) ( and ( <= ( - x 1 ) n ) ( > ( + ( - x 1 ) 1 ) n ) ) )  ))
 (check-sat)
 (get-model)
 (pop)

@@ -63,6 +63,7 @@ c2s(f: Formula) -> string {
         // aGet(a, i):    strGlue(["(select", c2s(a), c2s(i), ")"],  " ");
         // aLen(a):       "err"; //should not be in formula
 
+        Not(e):        strGlue(["( not", c2s(e), ")"],             " ");
         Less(l, r):    strGlue(["( <", c2s(l), c2s(r), ")"],      " ");
         More(l, r):    strGlue(["( >", c2s(l), c2s(r), ")"],      " ");
         ELess(l, r):    strGlue(["( <=", c2s(l), c2s(r), ")"],      " ");
@@ -95,6 +96,7 @@ c2hs(f: Formula) -> string {
 
         // aSet(a, i, v): strGlue(["(store", c2hs(a), c2hs(i), c2hs(v), ")"], " ");
         // aGet(a, i):    strGlue(["(select", c2hs(a), c2hs(i), ")"],  " ");
+        Not(e):        strGlue(["!", c2hs(e)],             "");
         Less(l, r):    strGlue(["(", c2hs(l), "<", c2hs(r), ")"],      " ");
         More(l, r):    strGlue(["(", c2hs(l), ">", c2hs(r), ")"],      " ");
         ELess(l, r):    strGlue(["(", c2hs(l), "<=", c2hs(r), ")"],      " ");

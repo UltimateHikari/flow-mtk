@@ -66,8 +66,10 @@ testNemo(i: int, s: string, verbose: bool, skipExecute: bool) -> void {
     virtualProg = testTranslate(parsedProg, verbose);
     if(!skipExecute){
         testExecute(virtualProg, verbose);
+    }else{
+        testVerify(s, parsedProg, verbose);
+        nop();
     }
-    testVerify(s, parsedProg, verbose);
     println("\n\n");
 }
 
